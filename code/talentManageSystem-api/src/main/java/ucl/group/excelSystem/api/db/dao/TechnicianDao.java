@@ -26,4 +26,6 @@ public interface TechnicianDao {
     void deleteTech(Long[] ids);
 
     void updateTotalByYearMonth(Map param);
+
+    List<BasicTechnicianEntity> searchByIds(@Param("technicianIds") ArrayList<Long> technicianIds);
 }

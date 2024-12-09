@@ -31,11 +31,7 @@
     </sql>
 
 
-    <!-- 根据ID查询 -->
-    <select id="searchById" resultMap="BasicProjectMap" parameterType="long">
-        <include refid="projectQuery"/>
-        where  bp.project_id = #{projectId}
-    </select>
+
 <select id="searchByCustomerId" resultMap="BasicProjectMap" parameterType="long">
     <include refid="projectQuery"/>
     where   bp.customer_id = #{customerId}
@@ -101,9 +97,18 @@
         LIMIT ${length} OFFSET ${start}
     </select>
 
+    <!-- 根据ID查询 -->
+    <select id="searchById" resultMap="BasicProjectMap" parameterType="long">
+        <include refid="projectQuery"/>
+        where  bp.project_id = #{projectId}
+    </select>
 
-
-
-
+    <select id="searchByIds" resultType="ucl.group.excelSystem.api.db.pojo.BasicProjectEntity">
+        <include refid="projectQuery"/>
+        where  bp.project_id in
+        <foreach collection="projectIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
 
 </mapper>

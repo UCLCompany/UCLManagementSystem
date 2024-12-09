@@ -7,9 +7,11 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @EnableAsync
 @ServletComponentScan
+@EnableTransactionManagement
 @ComponentScan(basePackages = {"ucl.group.talentManageSystem.api", "ucl.group.excelSystem.api"})
 @MapperScan(basePackages = {"ucl.group.talentManageSystem.api.db.dao","ucl.group.excelSystem.api.db.dao"})
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})

@@ -38,48 +38,47 @@
         <result column="update_by" property="updateBy"/>
     </resultMap>
 
-    <sql id="relatedProjectTechnicianQuery"  >
-            SELECT
-            rpt.project_technician_id ,
-            rpt.technician_id ,
-            rpt.project_id ,
-            rpt.status ,
-            rpt.contract,
-            rpt.remark,
-            rpt.c_begin_month,
-            rpt.c_end_month ,
-            rpt.stop_month ,
-            rpt.price_month ,
-            rpt.c_lower_hours ,
-            rpt.c_higher_hours,
-            rpt.c_reduct_price ,
-            rpt.c_increase_price ,
-            rpt.c_price,
-            rpt.h_begin_month,
-            rpt.h_end_month,
-            rpt.h_lower_hours,
-            rpt.h_higher_hours ,
-            rpt.h_reduct_price ,
-            rpt.h_increase_price ,
-            rpt.h_price ,
-            rpt.standard_hours ,
-            rpt.contract_num ,
-            rpt.parent_id,
-            rpt.del_flag,
-            rpt.create_time
-            FROM related_v2_project_technician rpt
+    <sql id="relatedProjectTechnicianQuery">
+        SELECT
+        rpt.project_technician_id ,
+        rpt.technician_id ,
+        rpt.project_id ,
+        rpt.status ,
+        rpt.contract,
+        rpt.remark,
+        rpt.c_begin_month,
+        rpt.c_end_month ,
+        rpt.stop_month ,
+        rpt.price_month ,
+        rpt.c_lower_hours ,
+        rpt.c_higher_hours,
+        rpt.c_reduct_price ,
+        rpt.c_increase_price ,
+        rpt.c_price,
+        rpt.h_begin_month,
+        rpt.h_end_month,
+        rpt.h_lower_hours,
+        rpt.h_higher_hours ,
+        rpt.h_reduct_price ,
+        rpt.h_increase_price ,
+        rpt.h_price ,
+        rpt.standard_hours ,
+        rpt.contract_num ,
+        rpt.parent_id,
+        rpt.del_flag,
+        rpt.create_time
+        FROM related_v2_project_technician rpt
     </sql>
 
     <!-- 查询所有记录 -->
     <select id="searchBetweenStartAndEnd" parameterType="String" resultMap="RelatedProjectTechnicianMap">
-       <include refid="relatedProjectTechnicianQuery"/>
+        <include refid="relatedProjectTechnicianQuery"/>
         WHERE rpt.del_flag = '0'
         AND COALESCE(rpt.c_begin_month, '2000-01-01') &lt;= #{dateEnd}
         AND
         (rpt.stop_month IS NOT NULL AND COALESCE(rpt.stop_month, '9999-12-01') &gt; #{dateStart}
-        OR rpt.stop_month IS NULL AND  COALESCE(rpt.c_end_month, '9999-12-01') &gt;= #{dateStart}
+        OR rpt.stop_month IS NULL AND COALESCE(rpt.c_end_month, '9999-12-01') &gt;= #{dateStart}
         )
-
     </select>
 
     <update id="saveRemark" parameterType="ucl.group.excelSystem.api.controller.form.SaveTechnicianListForm">
@@ -89,20 +88,28 @@
             update_time = sysdate(),
             update_by=#{updateBy}
         </set>
-        where  technician_id=#{technicianId}
+        where technician_id=#{technicianId}
     </update>
-<select id="searchByProjectTechId" parameterType="Long" resultMap="RelatedProjectTechnicianMap">
-    <include refid="relatedProjectTechnicianQuery"/>
-    where  rpt.project_technician_id =#{projectTechnicianId}
-</select>
-    <select id="searchByProjectId"  parameterType="long" resultMap="RelatedProjectTechnicianMap">
+
+    <select id="searchByProjectId" parameterType="long" resultMap="RelatedProjectTechnicianMap">
         <include refid="relatedProjectTechnicianQuery"/>
-        where  rpt.del_flag='0' and  rpt.project_id =#{projectId}
+        where rpt.del_flag='0' and rpt.project_id =#{projectId}
     </select>
-    <select id="searchByTechnicianId"  parameterType="long" resultMap="RelatedProjectTechnicianMap">
+    <select id="searchByTechnicianId" parameterType="long" resultMap="RelatedProjectTechnicianMap">
         <include refid="relatedProjectTechnicianQuery"/>
-        where  rpt.del_flag='0' and rpt.technician_id =#{technicianId}
+        where rpt.del_flag='0' and rpt.technician_id =#{technicianId}
     </select>
 
+    <select id="searchByProjectTechId" parameterType="Long" resultMap="RelatedProjectTechnicianMap">
+        <include refid="relatedProjectTechnicianQuery"/>
+        where rpt.project_technician_id =#{projectTechnicianId}
+    </select>
 
+    <select id="findAllById" resultType="ucl.group.excelSystem.api.db.pojo.RelatedProjectTechnician">
+        <include refid="relatedProjectTechnicianQuery"/>
+        WHERE rpt.project_technician_id IN
+        <foreach item="id" collection="projectTechnicianIds" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
 </mapper>

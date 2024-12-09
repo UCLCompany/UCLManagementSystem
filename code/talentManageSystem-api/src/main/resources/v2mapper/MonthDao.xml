@@ -33,7 +33,7 @@
     </resultMap>
 
     <!-- 查询语句 -->
-    <select id="searchByProjectTechIdAndYearMonths" resultMap="MonthResultMap" >
+    <select id="searchByProjectTechIdAndYearMonths" resultMap="MonthResultMap">
         SELECT
         month_id,
         project_technician_id,
@@ -63,7 +63,8 @@
         </foreach>
 
     </select>
-    <insert id="add" parameterType="ucl.group.excelSystem.api.db.pojo.BasicMonthEntity" keyProperty="monthId" useGeneratedKeys="true">
+    <insert id="add" parameterType="ucl.group.excelSystem.api.db.pojo.BasicMonthEntity" keyProperty="monthId"
+            useGeneratedKeys="true">
         INSERT INTO basic_v2_month (
         <if test="monthId != null">month_id,</if>
         <if test="projectTechnicianId != null">project_technician_id,</if>
@@ -107,32 +108,7 @@
         )
     </insert>
 
-    <update id="save" parameterType="ucl.group.excelSystem.api.db.pojo.BasicMonthEntity">
-        UPDATE basic_v2_month
-        <set>
-            <if test="projectTechnicianId != null">project_technician_id = #{projectTechnicianId},</if>
 
-            <if test="presumedTime != null">presumed_time = #{presumedTime},</if>
-            <if test="expectedPrice != null">expected_price = #{expectedPrice},</if>
-            <if test="actualHours != null">actual_hours = #{actualHours},</if>
-            <if test="actualPrice != null">actual_price = #{actualPrice},</if>
-            <if test="from != null">`from` = #{from},</if>
-            <if test="actualPriceEdit != null">actual_price_edit = #{actualPriceEdit},</if>
-            <if test="fromEdit != null">`from_edit` = #{fromEdit},</if>
-            <if test="subcontractPrice != null">subcontract_price = #{subcontractPrice},</if>
-
-            <if test="yearMonth != null">`year_month` = #{yearMonth,jdbcType=DATE},</if>
-            <if test="productNum != null">product_num = #{productNum},</if>
-            <if test="productName != null">product_name = #{productName},</if>
-            <if test="summary != null">summary = #{summary},</if>
-            <if test="personMonth != null">person_month = #{personMonth},</if>
-            <if test="orderAmount != null">order_amount = #{orderAmount},</if>
-            <if test="remark != null">remark = #{remark},</if>
-            update_time = now(),
-            <if test="updateBy != null">update_by = #{updateBy}</if>
-        </set>
-        WHERE month_id = #{monthId}
-    </update>
     <update id="savePresumedTime" parameterType="ucl.group.excelSystem.api.db.pojo.BasicMonthEntity">
         UPDATE basic_v2_month
         <set>
@@ -189,7 +165,7 @@
         </set>
         WHERE month_id = #{monthId}
     </update>
-    <select id="searchByYearMonth" resultMap="MonthResultMap" >
+    <select id="searchByYearMonth" resultMap="MonthResultMap">
         SELECT
         month_id,
         month_days,
@@ -257,8 +233,8 @@
         remark
         FROM basic_v2_month
         WHERE del_flag='0'
-        and `project_technician_id` =#{projectTechnicianId}
         and `year_month`= #{localDate}
+        and `project_technician_id` =#{projectTechnicianId}
     </select>
     <select id="searchByProjectTechId" resultMap="MonthResultMap">
         SELECT
@@ -285,7 +261,7 @@
         WHERE del_flag='0'
         and `project_technician_id` =#{projectTechnicianId}
     </select>
-    <select id="searchMonthDays"  resultType="Integer">
+    <select id="searchMonthDays" resultType="Integer">
         SELECT
         month_days
         from basic_v2_month
@@ -307,5 +283,58 @@
             <if test="totalNumber != null">total_number = #{totalNumber}</if>
         </set>
         WHERE `year_month`= #{localDate,jdbcType=DATE}
+    </update>
+
+    <update id="save" parameterType="ucl.group.excelSystem.api.db.pojo.BasicMonthEntity">
+        UPDATE basic_v2_month
+        <set>
+            <if test="projectTechnicianId != null">project_technician_id = #{projectTechnicianId},</if>
+            <if test="presumedTime != null">presumed_time = #{presumedTime},</if>
+            <if test="expectedPrice != null">expected_price = #{expectedPrice},</if>
+            <if test="actualHours != null">actual_hours = #{actualHours},</if>
+            <if test="actualPrice != null">actual_price = #{actualPrice},</if>
+            <if test="from != null">`from` = #{from},</if>
+            <if test="actualPriceEdit != null">actual_price_edit = #{actualPriceEdit},</if>
+            <if test="fromEdit != null">`from_edit` = #{fromEdit},</if>
+            <if test="subcontractPrice != null">subcontract_price = #{subcontractPrice},</if>
+
+            <if test="yearMonth != null">`year_month` = #{yearMonth,jdbcType=DATE},</if>
+            <if test="productNum != null">product_num = #{productNum},</if>
+            <if test="productName != null">product_name = #{productName},</if>
+            <if test="summary != null">summary = #{summary},</if>
+            <if test="personMonth != null">person_month = #{personMonth},</if>
+            <if test="orderAmount != null">order_amount = #{orderAmount},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_time = now(),
+            <if test="updateBy != null">update_by = #{updateBy}</if>
+        </set>
+        WHERE month_id = #{monthId}
+    </update>
+
+    <update id="saveAll">
+        <foreach collection="basicMonthEntities" item="item"  open="(" separator="," close=")">
+            UPDATE basic_v2_month
+            <set>
+                <if test="projectTechnicianId != null">project_technician_id = #{item.projectTechnicianId},</if>
+                <if test="presumedTime != null">presumed_time = #{item.presumedTime},</if>
+                <if test="expectedPrice != null">expected_price = #{item.expectedPrice},</if>
+                <if test="actualHours != null">actual_hours = #{item.actualHours},</if>
+                <if test="actualPrice != null">actual_price = #{item.actualPrice},</if>
+                <if test="from != null">`from` = #{item.from},</if>
+                <if test="actualPriceEdit != null">actual_price_edit = #{item.actualPriceEdit},</if>
+                <if test="fromEdit != null">`from_edit` = #{item.fromEdit},</if>
+                <if test="subcontractPrice != null">subcontract_price = #{item.subcontractPrice},</if>
+                <if test="yearMonth != null">`year_month` = #{item.yearMonth,jdbcType=DATE},</if>
+                <if test="productNum != null">product_num = #{item.productNum},</if>
+                <if test="productName != null">product_name = #{item.productName},</if>
+                <if test="summary != null">summary = #{item.summary},</if>
+                <if test="personMonth != null">person_month = #{item.personMonth},</if>
+                <if test="orderAmount != null">order_amount = #{item.orderAmount},</if>
+                <if test="remark != null">remark = #{item.remark},</if>
+                update_time = now(),
+                <if test="updateBy != null">update_by = #{item.updateBy}</if>
+            </set>
+            WHERE month_id = #{item.monthId}
+        </foreach>
     </update>
 </mapper>

@@ -127,5 +127,12 @@
         LIMIT ${length} OFFSET ${start}
     </select>
 
+    <select id="searchByIds" resultType="ucl.group.excelSystem.api.db.pojo.BasicTechnicianEntity">
+        <include refid="technicianQuery"/>
+        where bt.technician_id in
+        <foreach collection="technicianIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
 
 </mapper>

@@ -1,5 +1,6 @@
 package ucl.group.excelSystem.api.db.dao;
 
+import org.apache.ibatis.annotations.Param;
 import ucl.group.excelSystem.api.db.pojo.BasicProjectEntity;
 
 import java.util.ArrayList;
@@ -29,4 +30,5 @@ public interface ProjectDao {
     public long selectProjectByPageCount();
 
 
+    List<BasicProjectEntity> searchByIds(@Param("projectIds") ArrayList<Long> projectIds);
 }

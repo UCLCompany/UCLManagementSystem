@@ -4,12 +4,18 @@ server:
     context-path: /talentManageSystem-api
 
 spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
   jackson:
     time-zone: Asia/Tokyo
   datasource:
-    url: jdbc:mysql://localhost:3306/talentmanagesystem?useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Tokyo
+    url: jdbc:mysql://192.168.1.157:3306/talentmanagesystem?allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=Asia/Tokyo
+#    url: jdbc:mysql://localhost:3306/talentmanagesystem?allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Tokyo&allowMultiQueries=true
     username: root
-    password: uclucl1234
+    password: lxy020805.
+#    password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
     druid:

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ucl.group.excelSystem.api.common.constants.ExcelSystemConstants;
 import ucl.group.excelSystem.api.common.utils.TableUtils;
 import ucl.group.excelSystem.api.controller.form.SaveProjectTechnicianColumn;
@@ -294,8 +295,10 @@ public class TableServiceImpl implements TableService {
         return projectTechnicianVO;
     }
 
-    private List<ProjectTechnicianRow> convertToProjectTechnicianRows(List<RelatedProjectTechnician> relatedProjectTechnicians, LocalDate dateStart, LocalDate dateEnd) {
+    //原版
+/*    private List<ProjectTechnicianRow> convertToProjectTechnicianRows(List<RelatedProjectTechnician> relatedProjectTechnicians, LocalDate dateStart, LocalDate dateEnd) {
         List<RelatedProjectTechBO> relatedProjectTechBOS = changeRelatedBOList(relatedProjectTechnicians, dateStart, dateEnd);
+
         List<ProjectTechnicianRow> projectTechnicianRows = new ArrayList<>();
         for (RelatedProjectTechBO tempR : relatedProjectTechBOS) {
             ProjectTechnicianRow projectTechnicianRow = new ProjectTechnicianRow();
@@ -303,7 +306,36 @@ public class TableServiceImpl implements TableService {
             projectTechnicianRows.add(projectTechnicianRow);
         }
         return projectTechnicianRows;
+    }*/
+
+    //并行处理
+    private List<ProjectTechnicianRow> convertToProjectTechnicianRows(List<RelatedProjectTechnician> relatedProjectTechnicians, LocalDate dateStart, LocalDate dateEnd) {
+        List<RelatedProjectTechBO> relatedProjectTechBOS = changeRelatedBOList(relatedProjectTechnicians, dateStart, dateEnd);
+
+        return relatedProjectTechBOS.parallelStream()
+                .map(tempR -> {
+                    ProjectTechnicianRow projectTechnicianRow = new ProjectTechnicianRow();
+                    getProjectTechnicianRow(projectTechnicianRow, tempR, dateStart, dateEnd);
+                    return projectTechnicianRow;
+                })
+                .collect(Collectors.toList());
     }
+
+
+    //批量处理
+/*    private List<ProjectTechnicianRow> convertToProjectTechnicianRows(List<RelatedProjectTechnician> relatedProjectTechnicians, LocalDate dateStart, LocalDate dateEnd) {
+        List<RelatedProjectTechBO> relatedProjectTechBOS = changeRelatedBOList(relatedProjectTechnicians, dateStart, dateEnd);
+
+        List<ProjectTechnicianRow> projectTechnicianRows = new ArrayList<>(relatedProjectTechBOS.size());
+        for (RelatedProjectTechBO tempR : relatedProjectTechBOS) {
+            ProjectTechnicianRow projectTechnicianRow = new ProjectTechnicianRow();
+            getProjectTechnicianRow(projectTechnicianRow, tempR, dateStart, dateEnd);
+            projectTechnicianRows.add(projectTechnicianRow);
+        }
+        return projectTechnicianRows;
+    }*/
+
+
 
     private SaveProjectTechnicianListForm prepareSaveForm(List<ProjectTechnicianRow> projectTechnicianRows, List<ProjectTechnicianColumn> projectTechnicianColumns) {
         SaveProjectTechnicianListForm form = new SaveProjectTechnicianListForm();
@@ -443,20 +475,15 @@ public class TableServiceImpl implements TableService {
         return monthDataListVOS;
     }
 
-    /**
-     * @param relatedProjectTechnicians:
-     * @param dateStart:
-     * @param dateEnd:
-     * @return List<TechnicianListVO>
-     * @author he_jiale
-     * @description 确定新的cBeginMonth、cEndMonth、stopMonth以及全体管理信息[仅用于全体项目管理表！]
-     * @date 2024/07/10 15:33
-     */
-    public List<RelatedProjectTechBO> changeRelatedBOList
+//作废
+/*    public List<RelatedProjectTechBO> changeRelatedBOList
     (List<RelatedProjectTechnician> relatedProjectTechnicians, LocalDate dateStart, LocalDate dateEnd) {
         List<RelatedProjectTechBO> technicianListVOS = new ArrayList<>();
         for (RelatedProjectTechnician tempR : relatedProjectTechnicians) {
             RelatedProjectTechBO technicianListVO = new RelatedProjectTechBO();
+            BasicProjectEntity basicProjectEntity = projectDao.searchById(tempR.getProjectId());
+            BasicTechnicianEntity basicTechnicianEntity = technicianDao.searchById(tempR.getTechnicianId());
+
             technicianListVO.setProjectTechnicianId(tempR.getProjectTechnicianId());
             technicianListVO.setTechnicianId(tempR.getTechnicianId());
             technicianListVO.setStatus(Optional.ofNullable(tempR.getStatus()).orElse(""));
@@ -467,11 +494,11 @@ public class TableServiceImpl implements TableService {
             technicianListVO.setCReductPrice(Optional.ofNullable(tempR.getCReductPrice()).orElse(BigDecimal.valueOf(0)));
             technicianListVO.setCIncreasePrice(Optional.ofNullable(tempR.getCIncreasePrice()).orElse(BigDecimal.valueOf(0)));
             technicianListVO.setStandardHours(Optional.ofNullable(tempR.getStandardHours()).orElse(BigDecimal.valueOf(0)));
-            technicianListVO.setCustomerName(Optional.ofNullable(customerDao.searchById(projectDao.searchById(tempR.getProjectId()).getCustomerId()).getCustomerName()).orElse(""));
-            technicianListVO.setProjectName(Optional.ofNullable(projectDao.searchById(tempR.getProjectId()).getProjectName()).orElse(""));
-            technicianListVO.setName(Optional.ofNullable(technicianDao.searchById(tempR.getTechnicianId()).getName()).orElse(""));
+            technicianListVO.setCustomerName(Optional.ofNullable(customerDao.searchById(basicProjectEntity.getCustomerId()).getCustomerName()).orElse(""));
+            technicianListVO.setProjectName(Optional.ofNullable(basicProjectEntity.getProjectName()).orElse(""));
+            technicianListVO.setName(Optional.ofNullable(basicTechnicianEntity.getName()).orElse(""));
             //应用于排序的字段
-            technicianListVO.setBelongCompany(Optional.ofNullable(technicianDao.searchById(tempR.getTechnicianId()).getBelongCompany()).orElse(""));
+            technicianListVO.setBelongCompany(Optional.ofNullable(basicTechnicianEntity.getBelongCompany()).orElse(""));
             technicianListVO.setCreateTime(tempR.getCreateTime() == null ? DateUtils.getNowDate() : tempR.getCreateTime());
             technicianListVO.setTechnicianId(tempR.getTechnicianId());
             //确定真正的cBeginMonth和cEndMonth
@@ -541,7 +568,122 @@ public class TableServiceImpl implements TableService {
             technicianListVOS.add(technicianListVO);
         }
         return technicianListVOS;
+    }*/
+
+    /**
+     * @param relatedProjectTechnicians:
+     * @param dateStart:
+     * @param dateEnd:
+     * @return List<TechnicianListVO>
+     * @author he_jiale
+     * @description 确定新的cBeginMonth、cEndMonth、stopMonth以及全体管理信息[仅用于全体项目管理表！]
+     * @date 2024/07/10 15:33
+     */
+    public List<RelatedProjectTechBO> changeRelatedBOList(
+            List<RelatedProjectTechnician> relatedProjectTechnicians, LocalDate dateStart, LocalDate dateEnd) {
+
+        List<RelatedProjectTechBO> technicianListVOS = new ArrayList<>();
+
+        // 获取所有项目ID和技师ID
+        Set<Long> projectIds = relatedProjectTechnicians.stream()
+                .map(RelatedProjectTechnician::getProjectId)
+                .collect(Collectors.toSet());
+
+        Set<Long> technicianIds = relatedProjectTechnicians.stream()
+                .map(RelatedProjectTechnician::getTechnicianId)
+                .collect(Collectors.toSet());
+
+//        todo
+        // 批量查询项目和技师
+        List<BasicProjectEntity> projects = projectDao.searchByIds(new ArrayList<>(projectIds));
+        List<BasicTechnicianEntity> technicians = technicianDao.searchByIds(new ArrayList<>(technicianIds));
+
+        // 将查询结果转化为Map
+        Map<Long, BasicProjectEntity> projectMap = projects.stream()
+                .collect(Collectors.toMap(BasicProjectEntity::getProjectId, p -> p));
+
+        Map<Long, BasicTechnicianEntity> technicianMap = technicians.stream()
+                .collect(Collectors.toMap(BasicTechnicianEntity::getTechnicianId, t -> t));
+
+        // 使用parallelStream并行处理
+        technicianListVOS = relatedProjectTechnicians.parallelStream()
+                .map(tempR -> {
+                    RelatedProjectTechBO technicianListVO = new RelatedProjectTechBO();
+                    BasicProjectEntity basicProjectEntity = projectMap.get(tempR.getProjectId());
+                    BasicTechnicianEntity basicTechnicianEntity = technicianMap.get(tempR.getTechnicianId());
+
+                    technicianListVO.setProjectTechnicianId(tempR.getProjectTechnicianId());
+                    technicianListVO.setTechnicianId(tempR.getTechnicianId());
+                    technicianListVO.setStatus(Optional.ofNullable(tempR.getStatus()).orElse(""));
+                    technicianListVO.setCPrice(Optional.ofNullable(tempR.getCPrice()).orElse(BigDecimal.valueOf(0)));
+                    technicianListVO.setHPrice(Optional.ofNullable(tempR.getHPrice()).orElse(BigDecimal.valueOf(0)));
+                    technicianListVO.setCLowerHours(Optional.ofNullable(tempR.getCLowerHours()).orElse(BigDecimal.valueOf(0)));
+                    technicianListVO.setCHigherHours(Optional.ofNullable(tempR.getCHigherHours()).orElse(BigDecimal.valueOf(0)));
+                    technicianListVO.setCReductPrice(Optional.ofNullable(tempR.getCReductPrice()).orElse(BigDecimal.valueOf(0)));
+                    technicianListVO.setCIncreasePrice(Optional.ofNullable(tempR.getCIncreasePrice()).orElse(BigDecimal.valueOf(0)));
+                    technicianListVO.setStandardHours(Optional.ofNullable(tempR.getStandardHours()).orElse(BigDecimal.valueOf(0)));
+                    technicianListVO.setCustomerName(Optional.ofNullable(customerDao.searchById(basicProjectEntity.getCustomerId()).getCustomerName()).orElse(""));
+                    technicianListVO.setProjectName(Optional.ofNullable(basicProjectEntity.getProjectName()).orElse(""));
+                    technicianListVO.setName(Optional.ofNullable(basicTechnicianEntity.getName()).orElse(""));
+                    technicianListVO.setBelongCompany(Optional.ofNullable(basicTechnicianEntity.getBelongCompany()).orElse(""));
+                    technicianListVO.setCreateTime(tempR.getCreateTime() == null ? DateUtils.getNowDate() : tempR.getCreateTime());
+                    technicianListVO.setTechnicianId(tempR.getTechnicianId());
+
+                    // 确定真正的cBeginMonth和cEndMonth
+                    if (tempR.getCBeginMonth().isBefore(dateStart)) {
+                        technicianListVO.setCBeginMonth(DateUtils.localDateToStr(dateStart, "yyyy-MM"));
+                    } else {
+                        technicianListVO.setCBeginMonth(DateUtils.localDateToStr(tempR.getCBeginMonth(), "yyyy-MM"));
+                    }
+                    if (tempR.getCEndMonth() == null && tempR.getStopMonth() == null) {
+                        technicianListVO.setCEndMonth(DateUtils.localDateToStr(dateEnd, "yyyy-MM"));
+                        technicianListVO.setStopMonth("");
+                    } else {
+                        if (tempR.getCEndMonth() == null && tempR.getStopMonth() != null) {
+                            if (dateEnd.isBefore(tempR.getStopMonth())) {
+                                technicianListVO.setStopMonth("");
+                            } else {
+                                technicianListVO.setStopMonth(DateUtils.localDateToStr(tempR.getStopMonth(), "yyyy-MM"));
+                            }
+                            technicianListVO.setCEndMonth(DateUtils.localDateToStr(dateEnd, "yyyy-MM"));
+                        } else if (tempR.getCEndMonth() != null && tempR.getStopMonth() == null) {
+                            if (dateEnd.isBefore(tempR.getCEndMonth())) {
+                                technicianListVO.setCEndMonth(DateUtils.localDateToStr(dateEnd, "yyyy-MM"));
+                            } else {
+                                technicianListVO.setCEndMonth(DateUtils.localDateToStr(tempR.getCEndMonth(), "yyyy-MM"));
+                            }
+                            technicianListVO.setStopMonth("");
+                        } else {
+                            if (dateEnd.isBefore(tempR.getStopMonth())) {
+                                technicianListVO.setStopMonth("");
+                            } else {
+                                technicianListVO.setStopMonth(DateUtils.localDateToStr(tempR.getStopMonth(), "yyyy-MM"));
+                            }
+                            if (dateEnd.isBefore(tempR.getCEndMonth())) {
+                                technicianListVO.setCEndMonth(DateUtils.localDateToStr(dateEnd, "yyyy-MM"));
+                            } else {
+                                technicianListVO.setCEndMonth(DateUtils.localDateToStr(tempR.getCEndMonth(), "yyyy-MM"));
+                            }
+                        }
+                    }
+
+                    if (tempR.getPriceMonth() != null) {
+                        technicianListVO.setColorLeft(ExcelSystemConstants.GRAY_YES);
+                    } else {
+                        if (tempR.getParentId() != 0) {
+                            technicianListVO.setColorLeft(ExcelSystemConstants.GRAY_YES);
+                        } else {
+                            technicianListVO.setColorLeft(ExcelSystemConstants.GRAY_NO);
+                        }
+                    }
+
+                    return technicianListVO;
+                })
+                .collect(Collectors.toList());
+
+        return technicianListVOS;
     }
+
 
     @Override
     public void sortProjectTechnicianList(List<ProjectTechnicianRow> projectTechnicianRows) {
@@ -931,7 +1073,7 @@ public class TableServiceImpl implements TableService {
         }
     }
 
-    @Override
+/*    @Override
     public void flushMonthData(SaveProjectTechnicianListForm form) {
         List<BasicMonthEntity> basicMonthEntities = new ArrayList<>();
         for (SaveProjectTechnicianRow row : form.getRow()) {
@@ -983,7 +1125,92 @@ public class TableServiceImpl implements TableService {
                 throw new ServiceException("フォームの basicMonthEntity を保存できませんでした。" + e);
             }
         }
+    }*/
+
+
+    @Override
+    @Transactional
+    public void flushMonthData(SaveProjectTechnicianListForm form) {
+        List<BasicMonthEntity> basicMonthEntities = new ArrayList<>();
+        Map<Long, BigDecimal> standardHoursCache = new HashMap<>();
+
+        // 预先查询所有的标准工时并缓存
+        List<Long> projectTechnicianIds = form.getRow().stream()
+                .map(SaveProjectTechnicianRow::getProjectTechnicianId)
+                .collect(Collectors.toList());
+//        List<ProjectTechnician> projectTechnicians = relatedProjectTechnicianDao.findAllById(projectTechnicianIds);
+        List<RelatedProjectTechnician> relatedProjectTechnicians = relatedProjectTechnicianDao.findAllById(projectTechnicianIds);
+
+        for (RelatedProjectTechnician relatedProjectTechnician : relatedProjectTechnicians) {
+            standardHoursCache.put(relatedProjectTechnician.getProjectTechnicianId(), relatedProjectTechnician.getStandardHours());
+        }
+
+        for (SaveProjectTechnicianRow row : form.getRow()) {
+            List<MonthDataListVO> monthDataList = row.getMonthDataList();
+            int i = 0;
+            BigDecimal standardHours = standardHoursCache.getOrDefault(row.getProjectTechnicianId(), BigDecimal.ZERO);
+            for (MonthDataListVO monthDataListVO : monthDataList) {
+                BasicMonthEntity basicMonthEntity = new BasicMonthEntity();
+                basicMonthEntity.setMonthId(monthDataListVO.getMonthId());
+                BigDecimal newPresumedTime = standardHours.multiply(BigDecimal.valueOf(form.getColumn().get(i).getMonthDays()));
+
+                // 修改预计时间
+                basicMonthEntity.setPresumedTime(newPresumedTime);
+                // 修改预计单价
+                basicMonthEntity.setExpectedPrice(monthDataListVO.getExpectedPrice());
+                // 修改实际时间
+                basicMonthEntity.setActualHours(monthDataListVO.getActualHours());
+                basicMonthEntity.setActualPriceEdit(monthDataListVO.getActualPriceEdit());
+                basicMonthEntity.setFromEdit(monthDataListVO.getFromEdit());
+                // 修改实际价格
+                if (monthDataListVO.getActualPriceEdit()) {
+                    // 以人工修改的为准
+                    basicMonthEntity.setActualPrice(monthDataListVO.getActualPrice());
+                } else {
+                    // 自动计算
+                    BigDecimal actNumber = getNewActualPrice(monthDataListVO, row.getProjectTechnicianId());
+                    BigDecimal roundedNumber = actNumber.setScale(2, RoundingMode.HALF_UP);
+                    basicMonthEntity.setActualPrice(roundedNumber);
+                }
+                // 修改乖离
+                if (monthDataListVO.getFromEdit()) {
+                    // 以人工修改的为准
+                    basicMonthEntity.setFrom(monthDataListVO.getFrom());
+                } else {
+                    // 自动计算
+                    BigDecimal fromNumber = basicMonthEntity.getActualPrice().subtract(basicMonthEntity.getExpectedPrice());
+                    BigDecimal roundedNumber = fromNumber.setScale(2, RoundingMode.HALF_UP);
+                    basicMonthEntity.setFrom(roundedNumber);
+                }
+                basicMonthEntity.setUpdateBy(SecurityUtils.getUsername());
+                basicMonthEntities.add(basicMonthEntity);
+                i++;
+            }
+        }
+        //todo
+        // 批量保存
+        //batchSave(basicMonthEntities);
+        for (BasicMonthEntity basicMonthEntity : basicMonthEntities) {
+            try {
+                monthDao.save(basicMonthEntity);
+            } catch (Exception e) {
+                throw new ServiceException("フォームの basicMonthEntity を保存できませんでした。" + e);
+            }
+        }
     }
+
+    @Transactional
+    public void batchSave(List<BasicMonthEntity> basicMonthEntities) {
+        try {
+            monthDao.saveAll(basicMonthEntities);
+        } catch (Exception e) {
+            throw new ServiceException("フォームの basicMonthEntity を保存できませんでした。" + e);
+        }
+    }
+
+
+
+
     //计算最新的实际单价，原理同monthService的getNewActualPrice
     public BigDecimal getNewActualPrice(MonthDataListVO monthDataListVO, Long projectTechnicianId) {
         //低于下限时间: 実績単価＝見込単価－減単金*（精算幅（下限）-実時間）

@@ -5,7 +5,6 @@ import ucl.group.excelSystem.api.db.pojo.BasicMonthEntity;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * @projectName: code
@@ -33,4 +32,6 @@ public interface MonthDao {
     public Integer searchMonthDays(@Param("localDate") LocalDate localDate);
     public int remove(Long[] ids);
     public int modifyTotalNumber(@Param("totalNumber") int totalNumber,@Param("localDate") LocalDate localDate);
+
+    void saveAll(@Param("basicMonthEntities") List<BasicMonthEntity> basicMonthEntities);
 }

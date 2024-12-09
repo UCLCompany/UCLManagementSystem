@@ -12,4 +12,7 @@ public interface RelatedProjectTechnicianDao {
     public RelatedProjectTechnician searchByProjectTechId(Long projectTechnicianId);
     public List<RelatedProjectTechnician> searchByProjectId(Long projectId);
     public List<RelatedProjectTechnician> searchByTechnicianId(Long technicianId);
+
+    List<RelatedProjectTechnician> findAllById(@Param("projectTechnicianIds") List<Long> projectTechnicianIds);
+
 }
