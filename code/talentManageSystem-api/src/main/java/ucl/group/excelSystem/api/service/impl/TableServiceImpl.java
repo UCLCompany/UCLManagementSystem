@@ -276,11 +276,13 @@ public class TableServiceImpl implements TableService {
             return projectTechnicianVO;
         }
 
+        //todo
         // 转换BO列表并生成行数据
         List<ProjectTechnicianRow> projectTechnicianRows = convertToProjectTechnicianRows(relatedProjectTechnicians, dateStart, dateEnd);
         //第一次拿到column数据
         projectTechnicianVO.setColumn(monthService.getColumnData(dateStart, dateEnd));
 
+        //todo
         // 刷新数据库
         flushMonthData(prepareSaveForm(projectTechnicianRows, projectTechnicianVO.getColumn()));
 
@@ -1073,7 +1075,8 @@ public class TableServiceImpl implements TableService {
         }
     }
 
-/*    @Override
+/*
+    @Override
     public void flushMonthData(SaveProjectTechnicianListForm form) {
         List<BasicMonthEntity> basicMonthEntities = new ArrayList<>();
         for (SaveProjectTechnicianRow row : form.getRow()) {
@@ -1128,6 +1131,7 @@ public class TableServiceImpl implements TableService {
     }*/
 
 
+    //批量更新
     @Override
     @Transactional
     public void flushMonthData(SaveProjectTechnicianListForm form) {
@@ -1187,18 +1191,11 @@ public class TableServiceImpl implements TableService {
                 i++;
             }
         }
-        //todo
         // 批量保存
-        //batchSave(basicMonthEntities);
-        for (BasicMonthEntity basicMonthEntity : basicMonthEntities) {
-            try {
-                monthDao.save(basicMonthEntity);
-            } catch (Exception e) {
-                throw new ServiceException("フォームの basicMonthEntity を保存できませんでした。" + e);
-            }
-        }
+        batchSave(basicMonthEntities);
     }
 
+    //批量更新
     @Transactional
     public void batchSave(List<BasicMonthEntity> basicMonthEntities) {
         try {

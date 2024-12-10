@@ -33,5 +33,6 @@ public interface MonthDao {
     public int remove(Long[] ids);
     public int modifyTotalNumber(@Param("totalNumber") int totalNumber,@Param("localDate") LocalDate localDate);
 
+    //批量更新
     void saveAll(@Param("basicMonthEntities") List<BasicMonthEntity> basicMonthEntities);
 }

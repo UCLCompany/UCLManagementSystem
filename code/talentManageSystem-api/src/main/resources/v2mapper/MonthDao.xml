@@ -311,28 +311,29 @@
         WHERE month_id = #{monthId}
     </update>
 
-    <update id="saveAll">
-        <foreach collection="basicMonthEntities" item="item"  open="(" separator="," close=")">
+    <!--批量更新-->
+    <update id="saveAll" parameterType="java.util.List">
+        <foreach collection="basicMonthEntities" item="item" separator=";" index="index">
             UPDATE basic_v2_month
             <set>
-                <if test="projectTechnicianId != null">project_technician_id = #{item.projectTechnicianId},</if>
-                <if test="presumedTime != null">presumed_time = #{item.presumedTime},</if>
-                <if test="expectedPrice != null">expected_price = #{item.expectedPrice},</if>
-                <if test="actualHours != null">actual_hours = #{item.actualHours},</if>
-                <if test="actualPrice != null">actual_price = #{item.actualPrice},</if>
-                <if test="from != null">`from` = #{item.from},</if>
-                <if test="actualPriceEdit != null">actual_price_edit = #{item.actualPriceEdit},</if>
-                <if test="fromEdit != null">`from_edit` = #{item.fromEdit},</if>
-                <if test="subcontractPrice != null">subcontract_price = #{item.subcontractPrice},</if>
-                <if test="yearMonth != null">`year_month` = #{item.yearMonth,jdbcType=DATE},</if>
-                <if test="productNum != null">product_num = #{item.productNum},</if>
-                <if test="productName != null">product_name = #{item.productName},</if>
-                <if test="summary != null">summary = #{item.summary},</if>
-                <if test="personMonth != null">person_month = #{item.personMonth},</if>
-                <if test="orderAmount != null">order_amount = #{item.orderAmount},</if>
-                <if test="remark != null">remark = #{item.remark},</if>
-                update_time = now(),
-                <if test="updateBy != null">update_by = #{item.updateBy}</if>
+                <if test="item.projectTechnicianId != null">project_technician_id = #{item.projectTechnicianId},</if>
+                <if test="item.presumedTime != null">presumed_time = #{item.presumedTime},</if>
+                <if test="item.expectedPrice != null">expected_price = #{item.expectedPrice},</if>
+                <if test="item.actualHours != null">actual_hours = #{item.actualHours},</if>
+                <if test="item.actualPrice != null">actual_price = #{item.actualPrice},</if>
+                <if test="item.from != null">`from` = #{item.from},</if>
+                <if test="item.actualPriceEdit != null">actual_price_edit = #{item.actualPriceEdit},</if>
+                <if test="item.fromEdit != null">`from_edit` = #{item.fromEdit},</if>
+                <if test="item.subcontractPrice != null">subcontract_price = #{item.subcontractPrice},</if>
+                <if test="item.yearMonth != null">`year_month` = #{item.yearMonth,jdbcType=DATE},</if>
+                <if test="item.productNum != null">product_num = #{item.productNum},</if>
+                <if test="item.productName != null">product_name = #{item.productName},</if>
+                <if test="item.summary != null">summary = #{item.summary},</if>
+                <if test="item.personMonth != null">person_month = #{item.personMonth},</if>
+                <if test="item.orderAmount != null">order_amount = #{item.orderAmount},</if>
+                <if test="item.remark != null">remark = #{item.remark},</if>
+                <if test="item.updateBy != null">update_by = #{item.updateBy},</if>
+                update_time = now()
             </set>
             WHERE month_id = #{item.monthId}
         </foreach>
