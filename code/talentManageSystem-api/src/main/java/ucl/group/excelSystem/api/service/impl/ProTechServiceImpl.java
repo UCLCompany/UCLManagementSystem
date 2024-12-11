@@ -243,9 +243,7 @@ public class ProTechServiceImpl implements ProTechService {
 //                    }
 //                }
 //            }
-        }
-        else
-        {
+        } else {
             list = new ArrayList<>();
         }
 

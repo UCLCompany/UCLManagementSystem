@@ -21,6 +21,7 @@ import java.util.Map;
 public class ProjectV2ServiceImpl implements ProjectV2Service {
     @Resource
     private ProjectDao projectDao;
+
     @Override
     @Transactional
     public void insertProject(BasicProjectEntity basicProjectEntity) {

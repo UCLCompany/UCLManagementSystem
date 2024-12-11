@@ -477,6 +477,17 @@ public class MonthServiceImpl implements MonthService {
         }
     }
 
+    /**
+     * 保存实际价格信息
+     *
+     * 该方法主要用于保存项目技术人员的实际价格数据它通过遍历表单中的每一行数据，
+     * 对于每一行中的月度数据，创建相应的实体对象，并根据条件设置实体对象的属性值
+     * 如果实际价格是人工编辑的，则直接使用编辑后的价格，否则需要计算得出
+     * 同样，如果来源是人工编辑的，则直接使用编辑后的来源，否则需要计算得出
+     * 最后，将这些实体对象保存到数据库中
+     *
+     * @param form 包含项目技术人员实际价格信息的表单
+     */
     @Override
     @Transactional
     public void saveActualPrice(SaveProjectTechnicianListForm form) {
@@ -514,12 +525,12 @@ public class MonthServiceImpl implements MonthService {
                     basicMonthEntities.add(basicMonthEntity);
                     i++;
                 }
-            }
-            for (BasicMonthEntity basicMonthEntity : basicMonthEntities) {
-                try {
-                    monthDao.saveActualPrice(basicMonthEntity);
-                } catch (Exception e) {
-                    throw new ServiceException("フォームの basicMonthEntity を保存できませんでした。" + e);
+                for (BasicMonthEntity basicMonthEntity : basicMonthEntities) {
+                    try {
+                        monthDao.saveActualPrice(basicMonthEntity);
+                    } catch (Exception e) {
+                        throw new ServiceException("フォームの basicMonthEntity を保存できませんでした。" + e);
+                    }
                 }
             }
         }
@@ -630,7 +641,6 @@ public class MonthServiceImpl implements MonthService {
             monthDao.modifyTotalNumber(totalNumber, DateUtils.toLocalDateFirstDay(tempYearMonth));
         }
     }
-
 
 
 }
