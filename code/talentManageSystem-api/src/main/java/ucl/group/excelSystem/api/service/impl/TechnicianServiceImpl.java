@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.map.MapUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ucl.group.excelSystem.api.db.dao.MonthDao;
 import ucl.group.excelSystem.api.db.dao.ProTechDao;
 import ucl.group.excelSystem.api.db.dao.RelatedProjectTechnicianDao;
@@ -34,6 +35,7 @@ public class TechnicianServiceImpl implements TechnicianService {
 	private MonthDao monthDao;
 
 	@Override
+	@Transactional
 	public void insertTech(BasicTechnicianEntity basicTechnicianEntity) {
 		basicTechnicianEntity.setCreateBy(SecurityUtils.getUsername());
 		basicTechnicianEntity.setDelFlag("0");
@@ -41,6 +43,7 @@ public class TechnicianServiceImpl implements TechnicianService {
 	}
 
 	@Override
+	@Transactional
 	public PageUtils selectTechByPage(Map param) {
 		ArrayList<HashMap> list = null;
 		long count = technicianDao.selectTechByPageCount(param);
@@ -55,12 +58,14 @@ public class TechnicianServiceImpl implements TechnicianService {
 	}
 
 	@Override
+	@Transactional
 	public void updateTech(BasicTechnicianEntity basicTechnicianEntity) {
 		basicTechnicianEntity.setUpdateBy(SecurityUtils.getUsername());
 		technicianDao.updateTech(basicTechnicianEntity);
 	}
 
 	@Override
+	@Transactional
 	public void deleteTech(Long[] ids) {
 		technicianDao.deleteTech(ids);
 		List<Long> proTechIdsList = new ArrayList<>();

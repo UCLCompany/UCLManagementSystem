@@ -13,7 +13,7 @@
     </resultMap>
 
     <!-- 查询语句 -->
-    <select id="searchByMonthId" resultMap="DateResultMap" >
+    <select id="searchByMonthId" resultMap="DateResultMap">
         SELECT
         month_id,
         name,
@@ -22,20 +22,6 @@
         WHERE
         month_id = #{monthId}
     </select>
-    <insert id="add" parameterType="ucl.group.excelSystem.api.db.pojo.BasicDateEntity" keyProperty="dateId" useGeneratedKeys="true">
-        INSERT INTO basic_v2_date (
-        <if test="name != null">name,</if>
-        month_date,
-        <if test="dateId != null">date_id,</if>
-        <if test="monthId != null">month_id</if>
-        ) VALUES (
-        <if test="name != null">#{name},</if>
-        #{monthDate},
-        <if test="dateId != null">#{dateId},</if>
-        <if test="monthId != null">#{monthId}</if>
-
-        )
-    </insert>
 
     <select id="searchById" parameterType="Long" resultMap="DateResultMap">
         SELECT
@@ -46,9 +32,50 @@
         FROM basic_v2_date
         WHERE `date_id` =#{dateId}
     </select>
+
+
+    <insert id="add" parameterType="ucl.group.excelSystem.api.db.pojo.BasicDateEntity" keyProperty="dateId"
+            useGeneratedKeys="true">
+        INSERT INTO basic_v2_date (
+        <if test="name != null">name,</if>
+        month_date,
+        <if test="dateId != null">date_id,</if>
+        <if test="monthId != null">month_id</if>
+        ) VALUES (
+        <if test="name != null">#{name},</if>
+        #{monthDate},
+        <if test="dateId != null">#{dateId},</if>
+        <if test="monthId != null">#{monthId}</if>
+        )
+    </insert>
+
+
+    <insert id="addAll" parameterType="java.util.List">
+        INSERT INTO basic_v2_date (
+        <if test="basicDateEntities[0].name != null">name,</if>
+        month_date,
+        <if test="basicDateEntities[0].dateId != null">date_id,</if>
+        <if test="basicDateEntities[0].monthId != null">month_id</if>
+        ) VALUES
+        <foreach collection="basicDateEntities" item="item" separator=",">(
+            <if test="item.name != null">#{item.name},</if>
+            #{item.monthDate},
+            <if test="item.dateId != null">#{item.dateId},</if>
+            <if test="item.monthId != null">#{item.monthId}</if>
+            )
+        </foreach>
+    </insert>
+
     <delete id="removeByMonthId" parameterType="Long">
-        delete  from basic_v2_date
+        delete from basic_v2_date
         WHERE `month_id` = #{monthId}
     </delete>
 
+    <delete id="removeByMonthIds">
+        delete from basic_v2_date
+        where month_id in
+        <foreach collection="longList" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </delete>
 </mapper>

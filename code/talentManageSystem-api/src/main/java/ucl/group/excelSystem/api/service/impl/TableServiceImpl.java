@@ -48,11 +48,12 @@ public class TableServiceImpl implements TableService {
     @Autowired
     private StatsDao statsDao;
     @Autowired
-    private  MonthDao monthDao;
+    private MonthDao monthDao;
     @Autowired
     private MonthService monthService;
 
     @Override
+    @Transactional
     public List<TechnicianListVO> searchTechnicianList(LocalDate dateStart, LocalDate dateEnd) {
         //查询所有的技术者
         List<RelatedProjectTechnician> relatedProjectTechnicians = relatedProjectTechnicianDao.searchBetweenStartAndEnd(String.valueOf(dateStart), String.valueOf(dateEnd));
@@ -71,15 +72,49 @@ public class TableServiceImpl implements TableService {
         return technicianListVOS;
     }
 
+/*    public List<TechnicianListVO> searchTechnicianList(LocalDate dateStart, LocalDate dateEnd) {
+        // 查询所有的技术者
+        List<RelatedProjectTechnician> relatedProjectTechnicians =
+                relatedProjectTechnicianDao.searchBetweenStartAndEnd(String.valueOf(dateStart), String.valueOf(dateEnd));
+
+        // 去重
+        List<RelatedProjectTechnician> deduplicatedRelateds = TableUtils.deduplicateRelatedProTech(relatedProjectTechnicians);
+
+        // 处理并返回结果
+        return deduplicatedRelateds.stream()
+                .map(tempR -> {
+                    TechnicianListVO technicianListVO = new TechnicianListVO();
+                    getTechnicianListVOForYearMonth(technicianListVO, tempR, dateStart, dateEnd);
+                    return technicianListVO;
+                })
+                .sorted(this::compareTechnicianListVO)
+                .collect(Collectors.toList());
+    }*/
+
+/*    private int compareTechnicianListVO(TechnicianListVO vo1, TechnicianListVO vo2) {
+        // 自定义的排序逻辑
+        int cmp = vo1.getCustomerName().compareTo(vo2.getCustomerName());
+        if (cmp == 0) {
+            cmp = vo1.getProjectName().compareTo(vo2.getProjectName());
+            if (cmp == 0) {
+                cmp = vo1.getBelongCompany().compareTo(vo2.getBelongCompany());
+            }
+        }
+        return cmp;
+    }*/
+
+    @Transactional
     public void getTechnicianListVOForYearMonth(TechnicianListVO technicianListVO, RelatedProjectTechnician tempR, LocalDate dateStart, LocalDate dateEnd) {
         technicianListVO.setTechnicianId(tempR.getTechnicianId());
-        technicianListVO.setName(Optional.ofNullable(technicianDao.searchById(tempR.getTechnicianId()).getName()).orElse(""));
-        technicianListVO.setBelongCompany(Optional.ofNullable(technicianDao.searchById(tempR.getTechnicianId()).getBelongCompany()).orElse(""));
+        BasicTechnicianEntity searchedById = technicianDao.searchById(tempR.getTechnicianId());
+        BasicProjectEntity searchById = projectDao.searchById(tempR.getProjectId());
+        technicianListVO.setName(Optional.ofNullable(searchedById.getName()).orElse(""));
+        technicianListVO.setBelongCompany(Optional.ofNullable(searchedById.getBelongCompany()).orElse(""));
         technicianListVO.setRemark(Optional.ofNullable(tempR.getRemark()).orElse(""));
-        technicianListVO.setCustomerName(Optional.ofNullable(customerDao.searchById(projectDao.searchById(tempR.getProjectId()).getCustomerId()).getCustomerName()).orElse(""));
-        technicianListVO.setProjectName(Optional.ofNullable(projectDao.searchById(tempR.getProjectId()).getProjectName()).orElse(""));
-        technicianListVO.setPrincipal(Optional.ofNullable(projectDao.searchById(tempR.getProjectId()).getPrincipal()).orElse(""));
-        technicianListVO.setPrincipalCompany(Optional.ofNullable(projectDao.searchById(tempR.getProjectId()).getPrincipalCompany()).orElse(""));
+        technicianListVO.setCustomerName(Optional.ofNullable(customerDao.searchById(searchById.getCustomerId()).getCustomerName()).orElse(""));
+        technicianListVO.setProjectName(Optional.ofNullable(searchById.getProjectName()).orElse(""));
+        technicianListVO.setPrincipal(Optional.ofNullable(searchById.getPrincipal()).orElse(""));
+        technicianListVO.setPrincipalCompany(Optional.ofNullable(searchById.getPrincipalCompany()).orElse(""));
         //确定真正的cBeginMonth和cEndMonth
         if (tempR.getCBeginMonth().isBefore(dateStart)) {
             //beginMonth在dateStart前,以dateStart为准
@@ -117,6 +152,7 @@ public class TableServiceImpl implements TableService {
     }
 
     @Override
+    @Transactional
     public void saveTechnicianList(List<SaveTechnicianListForm> forms) {
         for (SaveTechnicianListForm saveTechnicianListForm : forms) {
             try {
@@ -130,20 +166,22 @@ public class TableServiceImpl implements TableService {
         }
     }
 
-    @Override
-    public List<TechnicianListStatsVO> searchTechnicianStatsList(LocalDate dateStart, LocalDate dateEnd) {
+    //原版
+    //@Override
+/*    public List<TechnicianListStatsVO> searchTechnicianStatsList(LocalDate dateStart, LocalDate dateEnd) {
         List<RelatedProjectTechnician> relatedProjectTechnicians = relatedProjectTechnicianDao.searchBetweenStartAndEnd(String.valueOf(dateStart), String.valueOf(dateEnd));
         List<TechnicianListVO> technicianListVOS = TableUtils.changeStartAndEndMonth(relatedProjectTechnicians, dateStart, dateEnd);
         //获取一年的月份范围
         List<String> yearMonths = TableUtils.getYearMonthsBetween(dateStart, dateEnd);
         //获取一年的日期范围(2024-03-01)
         List<String> yearMonthDays = TableUtils.getYearMonthDaysBetween(dateStart, dateEnd);
-        if (statsDao.countByYearMonth(yearMonthDays) == 12) {
+        int countByYearMonth = statsDao.countByYearMonth(yearMonthDays);
+        if (countByYearMonth == 12) {
             //刷新人数和比率记录
             flushStats(dateStart, dateEnd);
             //如果一年中12个月都有记录，则不新增
             return searchStats(yearMonths);
-        } else if (statsDao.countByYearMonth(yearMonthDays) == 0) {
+        } else if (countByYearMonth == 0) {
             //如果一年中12个月都没记录，则新增
             return addStats(yearMonths, technicianListVOS);
         } else {
@@ -151,10 +189,41 @@ public class TableServiceImpl implements TableService {
             //No records were found for 12 months. The database is incorrect.
             throw new ServiceException("12か月間の記録が見つかりませんでした。データベースが間違っています。");
         }
-
-    }
+    }*/
 
     @Override
+    @Transactional
+    public List<TechnicianListStatsVO> searchTechnicianStatsList(LocalDate dateStart, LocalDate dateEnd) {
+        // 优化查询，减少数据库访问次数
+        List<RelatedProjectTechnician> relatedProjectTechnicians = relatedProjectTechnicianDao.searchBetweenStartAndEnd(String.valueOf(dateStart), String.valueOf(dateEnd));
+
+        // 去重和转换日期范围
+        List<TechnicianListVO> technicianListVOS = TableUtils.changeStartAndEndMonth(
+                TableUtils.deduplicateRelatedProTech(relatedProjectTechnicians), dateStart, dateEnd);
+
+        // 获取一年的月份和日期范围
+        List<String> yearMonths = TableUtils.getYearMonthsBetween(dateStart, dateEnd);
+        List<String> yearMonthDays = TableUtils.getYearMonthDaysBetween(dateStart, dateEnd);
+
+        // 统计记录数量
+        int countByYearMonth = statsDao.countByYearMonth(yearMonthDays);
+
+        if (countByYearMonth == 12) {
+            // 刷新记录并返回查询结果
+            flushStats(dateStart, dateEnd);
+            return searchStats(yearMonths);
+        } else if (countByYearMonth == 0) {
+            // 新增记录
+            return addStats(yearMonths, technicianListVOS);
+        } else {
+            // 数据库出现异常情况
+            throw new ServiceException("12か月間の記録が見つかりませんでした。データベースが間違っています。");
+        }
+    }
+
+
+    @Override
+    @Transactional
     public int countTechniciansByCompany(List<TechnicianListVO> technicianListVOS, String companyName) {
         if (technicianListVOS == null || companyName == null) {
             return 0;
@@ -182,6 +251,7 @@ public class TableServiceImpl implements TableService {
      * @description 按12个月新增stats记录
      * @date 2024/07/09 14:10
      */
+    @Transactional
     public List<TechnicianListStatsVO> addStats(List<String> yearMonths, List<TechnicianListVO> technicianListVOS) {
         List<TechnicianListStatsVO> technicianListStatsVOS = new ArrayList<>();
         //获取belongCompany
@@ -226,6 +296,7 @@ public class TableServiceImpl implements TableService {
      * @description 根据yearMonth检索12个stats
      * @date 2024/07/09 14:13
      */
+    @Transactional
     public List<TechnicianListStatsVO> searchStats(List<String> yearMonths) {
         List<TechnicianListStatsVO> technicianListStatsVOS = new ArrayList<>();
         for (String tempYearMonth : yearMonths) {
@@ -246,6 +317,7 @@ public class TableServiceImpl implements TableService {
     }
 
     @Override
+    @Transactional
     public void saveTechnicianListStats(List<TechnicianListStatsVO> technicianListStatsVOS) {
         for (TechnicianListStatsVO tempStats : technicianListStatsVOS) {
             try {
@@ -267,6 +339,7 @@ public class TableServiceImpl implements TableService {
     }
 
     @Override
+    @Transactional
     public ProjectTechnicianVO searchProjectTechnicianList(LocalDate dateStart, LocalDate dateEnd) {
         ProjectTechnicianVO projectTechnicianVO = new ProjectTechnicianVO();
 
@@ -338,7 +411,6 @@ public class TableServiceImpl implements TableService {
     }*/
 
 
-
     private SaveProjectTechnicianListForm prepareSaveForm(List<ProjectTechnicianRow> projectTechnicianRows, List<ProjectTechnicianColumn> projectTechnicianColumns) {
         SaveProjectTechnicianListForm form = new SaveProjectTechnicianListForm();
 
@@ -364,6 +436,7 @@ public class TableServiceImpl implements TableService {
 
 
     //设置行内数据
+    @Transactional
     public void getProjectTechnicianRow(ProjectTechnicianRow projectTechnicianRow, RelatedProjectTechBO tempR, LocalDate dateStart, LocalDate dateEnd) {
         projectTechnicianRow.setProjectTechnicianId(tempR.getProjectTechnicianId());
         projectTechnicianRow.setCustomerName(tempR.getCustomerName());
@@ -581,6 +654,7 @@ public class TableServiceImpl implements TableService {
      * @description 确定新的cBeginMonth、cEndMonth、stopMonth以及全体管理信息[仅用于全体项目管理表！]
      * @date 2024/07/10 15:33
      */
+    @Transactional
     public List<RelatedProjectTechBO> changeRelatedBOList(
             List<RelatedProjectTechnician> relatedProjectTechnicians, LocalDate dateStart, LocalDate dateEnd) {
 
@@ -708,12 +782,14 @@ public class TableServiceImpl implements TableService {
     }
 
     @Override
+    @Transactional
     public void saveProjectTechnicianList(SaveProjectTechnicianListForm form) {
         monthService.saveAllItems(form);
 
     }
 
     @Override
+    @Transactional
     public List<ProjectMonthListVO> searchProjectMonthList(LocalDate localDate, Long customerId) {
         //先通过customerId确定有哪些项目
         List<BasicProjectEntity> basicProjectEntities = projectDao.searchByCustomerId(customerId);
@@ -736,6 +812,7 @@ public class TableServiceImpl implements TableService {
      * @description 生成作业管理表的返回内容
      * @date 2024/07/12 18:48
      */
+    @Transactional
     public List<ProjectMonthListVO> getJobManageListVOS(List<BasicProjectEntity> basicProjectEntities, LocalDate
             localDate, Long customerId) {
         //声明返回值
@@ -836,6 +913,7 @@ public class TableServiceImpl implements TableService {
         }
     }
 
+    @Transactional
     public void setMonthData(Long customerId, BasicMonthEntity basicMonthEntity, ProjectMonthListVO
             jobTechnicianListVO) {
         String customerName = customerDao.searchById(customerId).getCustomerName();
@@ -850,14 +928,20 @@ public class TableServiceImpl implements TableService {
         jobTechnicianListVO.setOrderAmount(Optional.ofNullable(basicMonthEntity.getOrderAmount()).orElse(BigDecimal.valueOf(0)));
         jobTechnicianListVO.setRemark(Optional.ofNullable(basicMonthEntity.getRemark()).orElse(""));
         jobTechnicianListVO.setPersonMonth(Optional.ofNullable(basicMonthEntity.getPersonMonth()).orElse(BigDecimal.valueOf(0)));
+
+        RelatedProjectTechnician relatedProjectTechnician = relatedProjectTechnicianDao.searchByProjectTechId(basicMonthEntity.getProjectTechnicianId());
+        BasicTechnicianEntity basicTechnicianEntity = technicianDao.searchById(relatedProjectTechnician.getTechnicianId());
+        BasicProjectEntity basicProjectEntity = projectDao.searchById(relatedProjectTechnician.getProjectId());
+
         //以下是用于排序
-        jobTechnicianListVO.setBelongCompany(technicianDao.searchById(relatedProjectTechnicianDao.searchByProjectTechId(basicMonthEntity.getProjectTechnicianId()).getTechnicianId()).getBelongCompany());
-        jobTechnicianListVO.setProjectName(projectDao.searchById(relatedProjectTechnicianDao.searchByProjectTechId(basicMonthEntity.getProjectTechnicianId()).getProjectId()).getProjectName());
+        jobTechnicianListVO.setBelongCompany(basicTechnicianEntity.getBelongCompany());
+        jobTechnicianListVO.setProjectName(basicProjectEntity.getProjectName());
         //以下是两个特殊类型的字段返回
-        jobTechnicianListVO.setName(technicianDao.searchById(relatedProjectTechnicianDao.searchByProjectTechId(basicMonthEntity.getProjectTechnicianId()).getTechnicianId()).getName());
-        jobTechnicianListVO.setPrincipal(Optional.ofNullable(projectDao.searchById(relatedProjectTechnicianDao.searchByProjectTechId(basicMonthEntity.getProjectTechnicianId()).getProjectId()).getPrincipal()).orElse(""));
+        jobTechnicianListVO.setName(basicTechnicianEntity.getName());
+        jobTechnicianListVO.setPrincipal(Optional.ofNullable(basicProjectEntity.getPrincipal()).orElse(""));
     }
 
+    @Transactional
     public List<DateListVO> getDateList(Long monthId) {
         //子属性返回值
         List<DateListVO> dateListVOS = new ArrayList<>();
@@ -943,7 +1027,7 @@ public class TableServiceImpl implements TableService {
     }
 
     @Override
-    public void saveProjectMonthList(List<ProjectMonthListVO> form) {
+/*    public void saveProjectMonthList(List<ProjectMonthListVO> form) {
 
         //同一个项目进行保存
         if (!form.isEmpty()) {
@@ -990,8 +1074,60 @@ public class TableServiceImpl implements TableService {
                 }
             }
         }
+    }*/
 
+    public void saveProjectMonthList(List<ProjectMonthListVO> form) {
+        if (form.isEmpty()) {
+            return;
+        }
+
+        int countProject = form.get(0).getCountProject();
+        int count = 0;
+        List<BasicMonthEntity> basicMonthEntities = new ArrayList<>();
+        int temp = 0;
+
+        while (count < form.size()) {
+            ProjectMonthListVO currentForm = form.get(count);
+            BasicMonthEntity monthEntity = new BasicMonthEntity();
+            monthEntity.setMonthId(currentForm.getMonthId());
+            monthEntity.setProjectTechnicianId(currentForm.getProjectTechnicianId());
+            monthEntity.setRemark(currentForm.getRemark());
+            monthEntity.setPersonMonth(currentForm.getPersonMonth());
+
+            if (currentForm.getCountProject() != 0) {
+                temp = count;
+                monthEntity.setProductName(currentForm.getProductName());
+                monthEntity.setProductNum(currentForm.getProductNum());
+                monthEntity.setSummary(currentForm.getSummary());
+                monthEntity.setOrderAmount(currentForm.getOrderAmount());
+            } else {
+                ProjectMonthListVO tempForm = form.get(temp);
+                monthEntity.setProductName(tempForm.getProductName());
+                monthEntity.setProductNum(tempForm.getProductNum());
+                monthEntity.setSummary(tempForm.getSummary());
+                monthEntity.setOrderAmount(tempForm.getOrderAmount());
+            }
+
+            basicMonthEntities.add(monthEntity);
+
+            if (currentForm.getCountProject() != 0) {
+                temp = count;
+            }
+
+            addProjectMonth(basicMonthEntities, form.get(0).getDateList(), form.get(temp).getDateList());
+            count++;
+
+            if (count == countProject) {
+                basicMonthEntities.clear();
+                if (count >= form.size()) {
+                    break;
+                }
+                countProject += form.get(count).getCountProject();
+            }
+        }
     }
+
+
 
     /**
      * @param basicMonthEntities:
@@ -1002,7 +1138,9 @@ public class TableServiceImpl implements TableService {
      * @description 增加日期信息
      * @date 2024/7/22 16:46
      */
-    public void addProjectMonth
+
+
+/*    public void addProjectMonth
     (List<BasicMonthEntity> basicMonthEntities, List<DateListVO> firstDateListVOS, List<DateListVO> dateListVOS) {
         try {
             //第一条记录才是对的name
@@ -1040,8 +1178,53 @@ public class TableServiceImpl implements TableService {
         } catch (Exception e) {
             throw new ServiceException("projectMonthフォームを保存できませんでした。" + e);
         }
+    }*/
+
+    @Transactional
+    public void addProjectMonth(List<BasicMonthEntity> basicMonthEntities, List<DateListVO> firstDateListVOS, List<DateListVO> dateListVOS) {
+        try {
+            // 第一条记录才是对的name
+            monthService.edit(basicMonthEntities);
+
+            if (!dateListVOS.isEmpty()) {
+                // 批量获取MonthId
+                List<Long> longList = basicMonthEntities.stream().map(BasicMonthEntity::getMonthId).collect(Collectors.toList());
+
+                // 批量删除旧记录
+                dateDao.removeByMonthIds(longList);
+
+                // 批量添加新记录
+                List<BasicDateEntity> basicDateEntities = new ArrayList<>();
+                for (int i = 0; i < longList.size(); i++) {
+                    Long monthId = longList.get(i);
+                    for (int j = 0; j < dateListVOS.size(); j++) {
+                        DateListVO dateListVO = dateListVOS.get(j);
+                        BasicDateEntity basicDateEntity = new BasicDateEntity();
+                        basicDateEntity.setMonthId(monthId);
+                        basicDateEntity.setName(firstDateListVOS.get(i).getName());
+
+                        if (StringUtils.isBlank(dateListVO.getMonthDate())) {
+                            basicDateEntity.setMonthDate(null);
+                        } else {
+                            basicDateEntity.setMonthDate(DateUtils.toLocalDateFirstDay(dateListVO.getMonthDate()));
+                        }
+                        basicDateEntities.add(basicDateEntity);
+                    }
+                }
+                dateDao.addAll(basicDateEntities);
+            } else {
+                // 为空则删除所有
+                List<Long> longList = basicMonthEntities.stream().map(BasicMonthEntity::getMonthId).collect(Collectors.toList());
+                dateDao.removeByMonthIds(longList);
+            }
+        } catch (Exception e) {
+            throw new ServiceException("projectMonthフォームを保存できませんでした。" + e);
+        }
     }
 
+
+
+    @Transactional
     @Override
     public void flushStats(LocalDate dateStart, LocalDate dateEnd) {
         List<RelatedProjectTechnician> relatedProjectTechnicians = relatedProjectTechnicianDao.searchBetweenStartAndEnd(String.valueOf(dateStart), String.valueOf(dateEnd));
@@ -1075,7 +1258,9 @@ public class TableServiceImpl implements TableService {
         }
     }
 
-/*
+
+
+/*  原版
     @Override
     public void flushMonthData(SaveProjectTechnicianListForm form) {
         List<BasicMonthEntity> basicMonthEntities = new ArrayList<>();
@@ -1206,9 +1391,8 @@ public class TableServiceImpl implements TableService {
     }
 
 
-
-
     //计算最新的实际单价，原理同monthService的getNewActualPrice
+    @Transactional
     public BigDecimal getNewActualPrice(MonthDataListVO monthDataListVO, Long projectTechnicianId) {
         //低于下限时间: 実績単価＝見込単価－減単金*（精算幅（下限）-実時間）
         BigDecimal newActualPrice;

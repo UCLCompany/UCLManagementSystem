@@ -2,6 +2,7 @@ package ucl.group.excelSystem.api.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import ucl.group.excelSystem.api.common.constants.ExcelSystemConstants;
 import ucl.group.excelSystem.api.common.utils.TableUtils;
@@ -49,6 +50,7 @@ public class MonthServiceImpl implements MonthService {
     private RelatedProjectTechnicianDao relatedProjectTechnicianDao;
 
     @Override
+    @Transactional
     public List<MonthDataListVO> getMonthDataList(Long projectTechnicianId, LocalDate dateStart, LocalDate dateEnd) {
         List<String> yearMonthDaysBetween = TableUtils.getYearMonthDaysBetween(dateStart, dateEnd);
         if (yearMonthDaysBetween.size() == 12) {
@@ -101,6 +103,7 @@ public class MonthServiceImpl implements MonthService {
     }
 
     @Override
+    @Transactional
     public void addMonthData(List<BasicMonthEntity> basicMonthEntities) {
         for (BasicMonthEntity basicMonthEntity : basicMonthEntities) {
             try {
@@ -112,6 +115,7 @@ public class MonthServiceImpl implements MonthService {
     }
 
     @Override
+    @Transactional
     public List<ProjectTechnicianColumn> getColumnData(LocalDate dateStart, LocalDate dateEnd) {
         //刷新人数，代替之前的redis逻辑
         flushTotalNumber(dateStart, dateEnd);
@@ -139,6 +143,7 @@ public class MonthServiceImpl implements MonthService {
      * @description 新增某技术者的6个月的月份价格信息，用于全体项目管理表，注意价格变动月之前和之后的信息
      * @date 2024/07/11 11:12
      */
+    @Transactional
     public void addMonthDataList(Long projectTechnicianId, List<String> yearMonthDays, LocalDate dateStart, LocalDate dateEnd) {
         for (String tempYearMonth : yearMonthDays) {
             BasicMonthEntity basicMonthEntity = new BasicMonthEntity();
@@ -182,6 +187,7 @@ public class MonthServiceImpl implements MonthService {
     }
 
     @Override
+    @Transactional
     public void saveMonthData(SaveProjectTechnicianListForm form) {
         List<BasicMonthEntity> basicMonthEntities = new ArrayList<>();
         if (!form.getRow().isEmpty()) {
@@ -230,6 +236,7 @@ public class MonthServiceImpl implements MonthService {
     }
 
     @Override
+    @Transactional
     public void saveAllItems(SaveProjectTechnicianListForm form) {
         List<BasicMonthEntity> basicMonthEntities = new ArrayList<>();
         if (!form.getColumn().isEmpty()) {
@@ -307,6 +314,7 @@ public class MonthServiceImpl implements MonthService {
     }
 
     @Override
+    @Transactional
     public void saveMonthDays(SaveProjectTechnicianListForm form) {
         List<BasicMonthEntity> basicMonthEntities = new ArrayList<>();
         if (!form.getColumn().isEmpty()) {
@@ -355,6 +363,7 @@ public class MonthServiceImpl implements MonthService {
     }
 
     @Override
+    @Transactional
     public void saveExpectedPrice(SaveProjectTechnicianListForm form) {
         List<BasicMonthEntity> basicMonthEntities = new ArrayList<>();
         if (!form.getRow().isEmpty()) {
@@ -381,6 +390,7 @@ public class MonthServiceImpl implements MonthService {
     }
 
     @Override
+    @Transactional
     public void saveActualHours(SaveProjectTechnicianListForm form) {
         List<BasicMonthEntity> basicMonthEntities = new ArrayList<>();
         if (!form.getRow().isEmpty()) {
@@ -429,6 +439,7 @@ public class MonthServiceImpl implements MonthService {
     }
 
     @Override
+    @Transactional
     public void saveFrom(SaveProjectTechnicianListForm form) {
         List<BasicMonthEntity> basicMonthEntities = new ArrayList<>();
         if (!form.getRow().isEmpty()) {
@@ -467,6 +478,7 @@ public class MonthServiceImpl implements MonthService {
     }
 
     @Override
+    @Transactional
     public void saveActualPrice(SaveProjectTechnicianListForm form) {
         List<BasicMonthEntity> basicMonthEntities = new ArrayList<>();
         if (!form.getRow().isEmpty()) {
@@ -520,6 +532,7 @@ public class MonthServiceImpl implements MonthService {
      * @Author: he_jiale
      * @Date: 12:21 2024/08/20
      */
+    @Transactional
     public BigDecimal getNewActualPrice(MonthDataListVO monthDataListVO, Long projectTechnicianId) {
         //低于下限时间: 実績単価＝見込単価－減単金*（精算幅（下限）-実時間）
         BigDecimal newActualPrice;
@@ -568,6 +581,7 @@ public class MonthServiceImpl implements MonthService {
      * @date 2024/07/11 11:15
      */
     @Override
+    @Transactional
     public int getTotalNumByMonth(String tempYearMonth, LocalDate dateStart, LocalDate dateEnd) {
         List<RelatedProjectTechnician> relatedProjectTechnicians = relatedProjectTechnicianDao.searchBetweenStartAndEnd(String.valueOf(dateStart), String.valueOf(dateEnd));
         List<TechnicianListVO> technicianListVOS = TableUtils.changeStartAndEndMonth(relatedProjectTechnicians, dateStart, dateEnd);
@@ -576,16 +590,19 @@ public class MonthServiceImpl implements MonthService {
     }
 
     @Override
+    @Transactional
     public BasicMonthEntity searchByProjectTechIdAndYearMonth(Long projectTechnicianId, LocalDate localDate) {
         return monthDao.searchByProjectTechIdAndYearMonth(projectTechnicianId, localDate);
     }
 
     @Override
+    @Transactional
     public List<BasicMonthEntity> searchByProjectTechId(Long projectTechnicianId) {
         return monthDao.searchByProjectTechId(projectTechnicianId);
     }
 
     @Override
+    @Transactional
     public void edit(List<BasicMonthEntity> basicMonthEntities) {
         for (BasicMonthEntity basicMonthEntity : basicMonthEntities) {
             try {
@@ -598,6 +615,7 @@ public class MonthServiceImpl implements MonthService {
     }
 
     @Override
+    @Transactional
     public void flushTotalNumber(LocalDate dateStart, LocalDate dateEnd) {
         List<RelatedProjectTechnician> relatedProjectTechnicians = relatedProjectTechnicianDao.searchBetweenStartAndEnd(String.valueOf(dateStart), String.valueOf(dateEnd));
         List<TechnicianListVO> technicianListVOS = TableUtils.changeStartAndEndMonth(relatedProjectTechnicians, dateStart, dateEnd);

@@ -147,7 +147,7 @@ public class TableController {
     @SaCheckLogin
     @SaCheckPermission(value = {"excel_edit"}, mode = SaMode.AND)
     public R saveProjectMonthList(@RequestBody  @Valid List<ProjectMonthListVO> form){
-        tableService.saveProjectMonthList( form);
+        tableService.saveProjectMonthList(form);
         return R.ok();
     }
 }

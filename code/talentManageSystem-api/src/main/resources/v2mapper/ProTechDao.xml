@@ -346,6 +346,7 @@
             and bp.customer_id = #{customerId}
         </if>
     </select>
+
     <select id="selectCustomer" resultType="java.util.HashMap">
         select
             bc.customer_id AS customerId,

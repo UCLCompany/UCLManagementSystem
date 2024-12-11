@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ucl.group.excelSystem.api.common.utils.TableUtils;
 import ucl.group.excelSystem.api.db.dao.ProTechDao;
 import ucl.group.excelSystem.api.db.dao.StatsDao;
@@ -75,6 +76,7 @@ public class ProTechServiceImpl implements ProTechService {
      * @description 追加
      * @date 2024/7/24 17:22
      */
+    @Transactional
     public void addProTech(RelatedProjectTechnician relatedProjectTechnicianS) {
         // 如果是新增，价格变动一定为空
         relatedProjectTechnicianS.setPriceMonth(null);
@@ -177,6 +179,7 @@ public class ProTechServiceImpl implements ProTechService {
      * @description 价格变动处理逻辑
      * @date 2024/7/24 17:21
      */
+    @Transactional
     public void priceChange(RelatedProjectTechnician relatedProjectTechnicianS) {
         HashMap mapF = proTechDao.selectProTechForUpdateOrChange(relatedProjectTechnicianS.getProjectTechnicianId());
         RelatedProjectTechnician relatedProjectTechnicianF = relatedProjectTechnicianS.clone();
@@ -210,6 +213,7 @@ public class ProTechServiceImpl implements ProTechService {
     }
 
     @Override
+    @Transactional
     public PageUtils selectProTechByPage(Map param) {
         ArrayList<HashMap> list = null;
         long count = proTechDao.selectProTechByPageCount(param);
@@ -253,12 +257,14 @@ public class ProTechServiceImpl implements ProTechService {
     }
 
     @Override
+    @Transactional
     public HashMap selectProTechForUpdateOrChange(long proTechId) {
         HashMap map = proTechDao.selectProTechForUpdateOrChange(proTechId);
         return map;
     }
 
     @Override
+    @Transactional
     public void updateProTech(RelatedProjectTechnician relatedProjectTechnician) {
         if (relatedProjectTechnician.getSelected().equals("exit")) {
             // 新增任用节点月
@@ -413,23 +419,27 @@ public class ProTechServiceImpl implements ProTechService {
 //    }
 
     @Override
+    @Transactional
     public void deleteProTech(Long[] ids) {
         proTechDao.deleteProTech(ids);
     }
 
     @Override
+    @Transactional
     public ArrayList<HashMap> selectTechnician() {
         ArrayList<HashMap> list = proTechDao.selectTechnician();
         return list;
     }
 
     @Override
+    @Transactional
     public ArrayList<HashMap> selectProject(Long customerId) {
         ArrayList<HashMap> list = proTechDao.selectProject(customerId);
         return list;
     }
 
     @Override
+    @Transactional
     public ArrayList<HashMap> selectCustomer() {
         ArrayList<HashMap> list = proTechDao.selectCustomer();
         return list;
@@ -471,6 +481,7 @@ public class ProTechServiceImpl implements ProTechService {
     /**
      *
      */
+    @Transactional
     private void stopMonthChange(Long projectTechnicianId, LocalDate stopMonth) {
         // 根据projectTechnicianId查询到父节点的值
         RelatedProjectTechnician relatedProjectTechnician = proTechDao.selectProTechForStopMonth(projectTechnicianId);

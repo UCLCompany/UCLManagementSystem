@@ -1,5 +1,6 @@
 package ucl.group.excelSystem.api.db.dao;
 
+import org.apache.ibatis.annotations.Param;
 import ucl.group.excelSystem.api.db.pojo.BasicDateEntity;
 
 import java.util.List;
@@ -18,4 +19,10 @@ public interface DateDao {
     public int add(BasicDateEntity basicDateEntity);
     public BasicDateEntity searchById(Long dateId);
     public int removeByMonthId(Long monthId);
+
+    //批量插入
+    void addAll(@Param("basicDateEntities")List<BasicDateEntity> basicDateEntities);
+
+    //批量删除
+    void removeByMonthIds(@Param("longList") List<Long> longList);
 }
