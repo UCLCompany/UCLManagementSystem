@@ -350,12 +350,14 @@ public class TableServiceImpl implements TableService {
         }
 
         //todo
+        
         // 转换BO列表并生成行数据
         List<ProjectTechnicianRow> projectTechnicianRows = convertToProjectTechnicianRows(relatedProjectTechnicians, dateStart, dateEnd);
         //第一次拿到column数据
         projectTechnicianVO.setColumn(monthService.getColumnData(dateStart, dateEnd));
 
         //todo
+
         // 刷新数据库
         flushMonthData(prepareSaveForm(projectTechnicianRows, projectTechnicianVO.getColumn()));
 

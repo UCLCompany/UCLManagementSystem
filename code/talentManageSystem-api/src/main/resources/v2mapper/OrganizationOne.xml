@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ucl.group.excelSystem.api.db.dao.OrganizationOneDao">
+
+    <insert id="insertOrganizationOne" parameterType="ucl.group.excelSystem.api.db.pojo.BasicOrganizationEntity">
+        insert into basic_v2_organization_one(organization_id,organization_name,belong)
+        values(#{organizationId},#{organizationName},#{belong})
+    </insert>
+
+    <update id="updateOrganizationOne" parameterType="ucl.group.excelSystem.api.db.pojo.BasicOrganizationEntity">
+        update basic_v2_organization_one
+        <set>
+            <if test="organizationName!=null">
+                organization_name=#{organizationName},
+            </if>
+            <if test="belong!=null">
+                belong=#{belong},
+            </if>
+        </set>
+        where organization_id=#{organizationId}
+    </update>
+
+    <delete id="deleteOrganizationOne">
+        delete from basic_v2_organization_one where organization_id=#{organizationId}
+    </delete>
+
+    <select id="selectOrganizationOneByPage" parameterType="Map" resultType="java.util.HashMap">
+        select
+        organization_id AS organizationId,
+        organization_name AS organizationName,
+        belong
+        from
+        basic_v2_organization_one
+        where
+        del_flag = 0
+        LIMIT ${length} OFFSET ${start}
+    </select>
+    <select id="selectOrganizationOneById"
+            resultType="ucl.group.excelSystem.api.db.pojo.BasicOrganizationEntity">
+        select
+        organization_id AS organizationId,
+        organization_name AS organizationName,
+        belong
+        from
+        basic_v2_organization_one
+        where
+        organization_id=#{organizationId}
+    </select>
+    <select id="selectAll" resultType="ucl.group.excelSystem.api.db.pojo.BasicOrganizationEntity">
+        select
+        organization_id AS organizationId,
+        organization_name AS organizationName,
+        belong
+        from
+        basic_v2_organization_one
+    </select>
+    <select id="selectOrganizationOneByPageCount" resultType="java.lang.Long">
+        select count(organization_id) from basic_v2_organization_one where del_flag = 0;
+    </select>
+
+</mapper>
