@@ -22,9 +22,15 @@
         where organization_id=#{organizationId}
     </update>
 
-    <delete id="deleteOrganizationOne">
-        delete from basic_v2_organization_one where organization_id=#{organizationId}
-    </delete>
+    <!--逻辑删除-->
+<!--    <delete id="deleteOrganizationOne">
+        delete from basic_v2_organization_one where organization_id=#{organizationId}&ndash;&gt;
+    </delete>-->
+    <update id="deleteOrganizationOne">
+        update basic_v2_organization_one
+        set del_flag=1
+        where organization_id=#{organizationId}
+    </update>
 
     <select id="selectOrganizationOneByPage" parameterType="Map" resultType="java.util.HashMap">
         select

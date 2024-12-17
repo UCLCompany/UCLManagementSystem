@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ucl.group.excelSystem.api.db.dao.RelatedOrg2AndOrg3Dao;
+import ucl.group.excelSystem.api.db.pojo.BasicOrganizationEntity;
+import ucl.group.excelSystem.api.service.OrganizationTwoService;
 import ucl.group.excelSystem.api.service.RelatedOrg2AndOrg3;
 
 import javax.annotation.Resource;
@@ -15,6 +17,7 @@ public class RelatedOrg2AndOrg3Impl implements RelatedOrg2AndOrg3 {
 
     @Resource
     private RelatedOrg2AndOrg3Dao relatedOrg2AndOrg3Dao;
+
 
 
     @Override
@@ -45,5 +48,10 @@ public class RelatedOrg2AndOrg3Impl implements RelatedOrg2AndOrg3 {
     @Transactional
     public List<Long> selectOrg2AndOrg3ByOrg2Id(Long org2Id) {
         return relatedOrg2AndOrg3Dao.selectOrg2AndOrg3ByOrg2Id(org2Id);
+    }
+
+    @Override
+    public Long selectOrg2AndOrg3ByOrg3Id(Long org3Id) {
+        return relatedOrg2AndOrg3Dao.selectOrg2AndOrg3ByOrg3Id(org3Id);
     }
 }

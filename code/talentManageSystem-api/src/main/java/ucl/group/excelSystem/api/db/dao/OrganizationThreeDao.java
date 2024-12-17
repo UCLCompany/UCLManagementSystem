@@ -31,4 +31,8 @@ public interface OrganizationThreeDao {
     long getId(String organizationName);
 
     List<BasicOrganizationEntity> selectOrganizationThreeByIds(@Param("ids") List<Long> ids);
+
+    BasicOrganizationEntity getById(Long id);
+
+    List<Long> getAllId();
 }

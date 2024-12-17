@@ -25,4 +25,9 @@ public interface OrganizationThreeService {
 
     List<BasicOrganizationEntity> selectOrganizationThreeByIds(List<Long> ids);
 
+    PageUtils getUpper(@Param("param") Map<String, Object> param);
+
+    BasicOrganizationEntity getById(Long id);
+
+    List<Long> getAllId();
 }

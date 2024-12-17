@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 @Data
 public class DeleteOrganizationRequest {
 
-    //@NotEmpty(message = "organizationId不能为空")
     @NotNull
     private Long organizationId;
 }

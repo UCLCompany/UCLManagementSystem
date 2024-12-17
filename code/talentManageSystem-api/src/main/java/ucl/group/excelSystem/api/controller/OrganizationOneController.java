@@ -70,4 +70,8 @@ public class OrganizationOneController {
         return R.ok().put("result", organizationOneService.selectAll());
     }
 
+    @GetMapping("/getById")
+    public R selectOrganizationOneById(@Valid SelectOrganizationRequest request) {
+        return R.ok().put("result", organizationOneService.getById(request.getOrganizationId()));
+    }
 }

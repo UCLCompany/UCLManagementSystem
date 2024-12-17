@@ -30,4 +30,9 @@ public interface OrganizationTwoDao {
     long getId(String organizationName);
 
     List<BasicOrganizationEntity> selectOrganizationTwoByIds(List<Long> ids);
+
+    BasicOrganizationEntity getById(Long id);
+
+    List<Long> getAllId();
+
 }

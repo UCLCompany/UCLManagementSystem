@@ -15,6 +15,6 @@ public class InsertOrganizationRequest {
     @NotNull(message = "belong不能为空")
     private String belong;
 
-    @NotNull
+
     private Long organizationId;
 }

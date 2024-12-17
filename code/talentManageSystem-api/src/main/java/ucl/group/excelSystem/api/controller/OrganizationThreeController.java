@@ -68,4 +68,15 @@ public class OrganizationThreeController {
     public R selectOrganizationThreeById(@Valid SelectOrganizationRequest request){
         return R.ok().put("result",organizationThreeService.selectOrganizationThreeById(request.getOrganizationId()));
     }
+
+    //往上查
+    @GetMapping("/getUpper")
+    public R getUpper(@Valid OrganizationPageRequest request){
+        Map<String, Object> param = BeanUtil.beanToMap(request);
+        int page = request.getPage();
+        int length = request.getLength();
+        int start = (page - 1) * length;
+        param.put("start", start);
+        return R.ok().put("result", organizationThreeService.getUpper(param));
+    }
 }

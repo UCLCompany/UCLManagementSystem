@@ -27,9 +27,15 @@
         where organization_id=#{organizationId}
     </update>
 
-    <delete id="deleteOrganizationThree">
-        delete from basic_v2_organization_three where organization_id=#{organizationId}
-    </delete>
+    <!--逻辑删除-->
+    <!--    <delete id="deleteOrganizationThree">
+            delete from basic_v2_organization_three where organization_id=#{organizationId}
+        </delete>-->
+    <update id="deleteOrganizationThree">
+        update basic_v2_organization_three
+        set del_flag=1
+        where organization_id=#{organizationId}
+    </update>
 
     <select id="selectOrganizationThreeByPage" parameterType="Map" resultType="java.util.HashMap">
         select
@@ -65,7 +71,8 @@
         basic_v2_organization_three
     </select>
     <select id="getId" resultType="java.lang.Long">
-        select organization_id as organizationId from basic_v2_organization_three where organization_name=#{organizationName}
+        select organization_id as organizationId from basic_v2_organization_three where
+        organization_name=#{organizationName}
     </select>
     <select id="selectOrganizationThreeByIds"
             resultType="ucl.group.excelSystem.api.db.pojo.BasicOrganizationEntity">
@@ -80,5 +87,18 @@
         <foreach collection="ids" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
+    </select>
+    <select id="getById" resultType="ucl.group.excelSystem.api.db.pojo.BasicOrganizationEntity">
+        select
+        organization_id AS organizationId,
+        organization_name AS organizationName,
+        belong
+        from
+        basic_v2_organization_three
+        where
+        organization_id=#{id}
+    </select>
+    <select id="getAllId" resultType="java.lang.Long">
+        select organization_id from basic_v2_organization_three
     </select>
 </mapper>

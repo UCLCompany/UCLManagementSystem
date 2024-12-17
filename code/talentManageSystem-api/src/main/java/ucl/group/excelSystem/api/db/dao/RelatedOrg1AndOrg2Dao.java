@@ -1,5 +1,7 @@
 package ucl.group.excelSystem.api.db.dao;
 
+import ucl.group.excelSystem.api.db.pojo.BasicOrganizationEntity;
+
 import java.util.List;
 
 public interface RelatedOrg1AndOrg2Dao {
@@ -13,4 +15,5 @@ public interface RelatedOrg1AndOrg2Dao {
 
     List<Long> selectOrg1AndOrg2ByOrg1Id(Long org1Id);
 
+    Long getOrganizationOneByOrganizationTwoId(Long org2Id);
 }

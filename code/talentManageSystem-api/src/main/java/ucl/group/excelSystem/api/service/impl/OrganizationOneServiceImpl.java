@@ -2,6 +2,8 @@ package ucl.group.excelSystem.api.service.impl;
 
 import cn.hutool.core.map.MapUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ucl.group.excelSystem.api.db.dao.OrganizationOneDao;
@@ -29,8 +31,13 @@ public class OrganizationOneServiceImpl implements OrganizationOneService {
     @Resource
     private RelatedOrg1AndOrg2 relatedOrg1AndOrg2;
 
-    @Resource
-    private OrganizationTwoService organizationTwoService;
+
+    private final OrganizationTwoService organizationTwoService;
+
+    @Autowired
+    public OrganizationOneServiceImpl(@Lazy OrganizationTwoService organizationTwoService) {
+        this.organizationTwoService = organizationTwoService;
+    }
 
     @Override
     @Transactional
@@ -97,5 +104,10 @@ public class OrganizationOneServiceImpl implements OrganizationOneService {
     @Transactional
     public List<BasicOrganizationEntity> selectAll() {
         return organizationOneDao.selectAll();
+    }
+
+    @Override
+    public BasicOrganizationEntity getById(Long id) {
+        return organizationOneDao.selectOrganizationOneById(id);
     }
 }

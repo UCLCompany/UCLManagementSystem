@@ -72,4 +72,15 @@ public class OrganizationTwoController {
     public R selectById(@Valid SelectOrganizationRequest request){
         return R.ok().put("result",organizationTwoService.selectOrganizationTwoById(request.getOrganizationId()));
     }
+
+    //查询组织 2 所属的组织 1
+    @GetMapping("/getUpper")
+    public R getUpper(@Valid OrganizationPageRequest request){
+        Map<String, Object> param = BeanUtil.beanToMap(request);
+        int page = request.getPage();
+        int length = request.getLength();
+        int start = (page - 1) * length;
+        param.put("start", start);
+        return R.ok().put("result", organizationTwoService.getUpper(param));
+    }
 }

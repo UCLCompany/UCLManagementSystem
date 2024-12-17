@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="ucl.group.excelSystem.api.db.dao.OrganizationTwoDao">
-    <insert id="insertOrganizationTwo"  useGeneratedKeys="true" keyProperty="organizationId">
+    <insert id="insertOrganizationTwo" useGeneratedKeys="true" keyProperty="organizationId">
         insert into basic_v2_organization_two(
         organization_name,belong
         )
@@ -26,9 +26,15 @@
         where organization_id=#{organizationId}
     </update>
 
-    <delete id="deleteOrganizationTwo">
+    <!--逻辑删除-->
+    <!--<delete id="deleteOrganizationTwo">
         delete from basic_v2_organization_two where organization_id=#{organizationId}
-    </delete>
+    </delete>-->
+    <update id="deleteOrganizationTwo">
+        update basic_v2_organization_two
+        set del_flag=1
+        where organization_id=#{organizationId}
+    </update>
 
     <select id="selectOrganizationTwoByPage" parameterType="Map" resultType="java.util.HashMap">
         select
@@ -64,7 +70,8 @@
         basic_v2_organization_two
     </select>
     <select id="getId" resultType="java.lang.Long">
-        select organization_id AS organizationId from basic_v2_organization_two where organization_name=#{organizationName}
+        select organization_id AS organizationId from basic_v2_organization_two where
+        organization_name=#{organizationName}
     </select>
     <select id="selectOrganizationTwoByIds"
             resultType="ucl.group.excelSystem.api.db.pojo.BasicOrganizationEntity">
@@ -79,5 +86,18 @@
         <foreach collection="ids" item="id" separator="," open="(" close=")">
             #{id}
         </foreach>
+    </select>
+    <select id="getById" resultType="ucl.group.excelSystem.api.db.pojo.BasicOrganizationEntity">
+        select
+        organization_id AS organizationId,
+        organization_name AS organizationName,
+        belong
+        from
+        basic_v2_organization_two
+        where
+        organization_id=#{id}
+    </select>
+    <select id="getAllId" resultType="java.lang.Long">
+        select organization_id from basic_v2_organization_two
     </select>
 </mapper>

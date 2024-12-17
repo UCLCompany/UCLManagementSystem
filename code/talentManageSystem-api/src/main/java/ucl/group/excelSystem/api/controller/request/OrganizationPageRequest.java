@@ -12,5 +12,4 @@ public class OrganizationPageRequest {
     @NotNull(message = "length不能为空")
     private int length;
 
-    //private String organizationName;
 }

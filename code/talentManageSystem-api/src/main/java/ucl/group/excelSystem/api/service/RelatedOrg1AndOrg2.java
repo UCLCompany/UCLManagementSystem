@@ -1,5 +1,7 @@
 package ucl.group.excelSystem.api.service;
 
+import ucl.group.excelSystem.api.db.pojo.BasicOrganizationEntity;
+
 import java.util.List;
 
 public interface RelatedOrg1AndOrg2 {
@@ -11,5 +13,9 @@ public interface RelatedOrg1AndOrg2 {
 
     boolean isRelatedByOrg1Id(Long org1Id);
 
+    //往下查
     List<Long> selectOrg1AndOrg2ByOrg1Id(Long organizationId);
+
+    //往上查
+    Long getOrganizationOneByOrganizationTwoId(Long org2Id);
 }

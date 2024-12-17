@@ -21,4 +21,6 @@ public interface OrganizationOneService {
     List<BasicOrganizationEntity> selectOrganizationOneById(@Param("organizationId") Long organizationId);
 
     List<BasicOrganizationEntity> selectAll();
+
+    BasicOrganizationEntity getById(Long id);
 }
