@@ -23,9 +23,6 @@
     </update>
 
     <!--逻辑删除-->
-<!--    <delete id="deleteOrganizationOne">
-        delete from basic_v2_organization_one where organization_id=#{organizationId}&ndash;&gt;
-    </delete>-->
     <update id="deleteOrganizationOne">
         update basic_v2_organization_one
         set del_flag=1
@@ -53,6 +50,8 @@
         basic_v2_organization_one
         where
         organization_id=#{organizationId}
+        and
+        del_flag = 0
     </select>
     <select id="selectAll" resultType="ucl.group.excelSystem.api.db.pojo.BasicOrganizationEntity">
         select
@@ -61,6 +60,8 @@
         belong
         from
         basic_v2_organization_one
+        where
+        del_flag = 0
     </select>
     <select id="selectOrganizationOneByPageCount" resultType="java.lang.Long">
         select count(organization_id) from basic_v2_organization_one where del_flag = 0;

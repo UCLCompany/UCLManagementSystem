@@ -14,25 +14,47 @@
     </insert>
 
     <!--逻辑删除-->
-<!--    <delete id="deleteOrg1AndOrg2ByOrg2Id">
-        delete from related_v2_org1_cross_org2 where organization_two_id = #{org2Id}
-    </delete>-->
     <update id="deleteOrg1AndOrg2ByOrg2Id">
         update related_v2_org1_cross_org2 set del_flag = 1 where organization_two_id = #{org2Id}
     </update>
 
     <select id="isRelatedByOrg1IdAndOrg2Id" resultType="java.lang.Boolean">
-        select count(1) > 0 from related_v2_org1_cross_org2 where organization_one_id = #{org1Id} and
+        select
+        count(1) > 0
+        from related_v2_org1_cross_org2
+        where
+        organization_one_id = #{org1Id}
+        and
         organization_two_id = #{org2Id}
+        and
+        del_flag = 0
     </select>
     <select id="isRelatedByOrg1Id" resultType="java.lang.Boolean">
-        select count(1) > 0 from related_v2_org1_cross_org2 where organization_one_id = #{org1Id}
+        select
+        count(1) > 0
+        from related_v2_org1_cross_org2
+        where
+        organization_one_id = #{org1Id}
+        and
+        del_flag = 0
     </select>
     <select id="selectOrg1AndOrg2ByOrg1Id" resultType="java.lang.Long">
-        select organization_two_id from related_v2_org1_cross_org2 where organization_one_id = #{org1Id}
+        select
+        organization_two_id
+        from related_v2_org1_cross_org2
+        where
+        organization_one_id = #{org1Id}
+        and
+        del_flag = 0
     </select>
     <select id="getOrganizationOneByOrganizationTwoId" resultType="java.lang.Long">
-        select organization_one_id from related_v2_org1_cross_org2 where organization_two_id = #{org2Id}
+        select
+        organization_one_id
+        from related_v2_org1_cross_org2
+        where
+        organization_two_id = #{org2Id}
+        and
+        del_flag = 0
     </select>
 
 </mapper>

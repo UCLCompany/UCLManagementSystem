@@ -9,24 +9,47 @@
         values (#{org2Id},#{org3Id})
     </insert>
     <!--逻辑删除-->
-<!--    <delete id="deleteOrg2AndOrg3ByOrg3Id">
-        delete from related_v2_org2_cross_org3 where organization_three_id = #{org3Id}
-    </delete>-->
     <update id="deleteOrg2AndOrg3ByOrg3Id">
         update related_v2_org2_cross_org3 set del_flag = 1 where organization_three_id = #{org3Id}
     </update>
 
     <select id="isRelatedByOrg2IdAndOrg3Id" resultType="java.lang.Boolean">
-        select count(1) > 0 from related_v2_org2_cross_org3 where organization_two_id = #{org2Id} and organization_three_id = #{org3Id}
+        select
+        count(1) > 0
+        from related_v2_org2_cross_org3
+        where
+        organization_two_id = #{org2Id}
+        and
+        organization_three_id = #{org3Id}
+        and
+        del_flag = 0
     </select>
     <select id="isRelatedByOrg2Id" resultType="java.lang.Boolean">
-        select count(1) > 0 from related_v2_org2_cross_org3 where organization_two_id = #{org2Id}
+        select
+        count(1) > 0
+        from related_v2_org2_cross_org3
+        where
+        organization_two_id = #{org2Id}
+        and
+        del_flag = 0
     </select>
     <select id="selectOrg2AndOrg3ByOrg2Id" resultType="java.lang.Long">
-        select organization_three_id from related_v2_org2_cross_org3 where organization_two_id = #{org2Id}
+        select
+        organization_three_id
+        from related_v2_org2_cross_org3
+        where
+        organization_two_id = #{org2Id}
+        and
+        del_flag = 0
     </select>
     <select id="selectOrg2AndOrg3ByOrg3Id" resultType="java.lang.Long">
-        select organization_two_id from related_v2_org2_cross_org3 where organization_three_id = #{org3Id}
+        select
+        organization_two_id
+        from related_v2_org2_cross_org3
+        where
+        organization_three_id = #{org3Id}
+        and
+        del_flag = 0
     </select>
 
 </mapper>
