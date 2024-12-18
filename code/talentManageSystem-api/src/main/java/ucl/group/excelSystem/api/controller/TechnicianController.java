@@ -22,9 +22,9 @@ public class TechnicianController {
 
 	@Resource
 	private TechnicianService technicianService;
-	@Log(title = "管理表格系统v2-技术者管理", businessType = BusinessType.INSERT)
+	//@Log(title = "管理表格系统v2-技术者管理", businessType = BusinessType.INSERT)
 	@PostMapping
-	@SaCheckLogin
+	//@SaCheckLogin
 	public R insertTech(@RequestBody @Valid InsertTechForm form) {
 		BasicTechnicianEntity basicTechnicianEntity = BeanUtil.toBean(form, BasicTechnicianEntity.class);
 		technicianService.insertTech(basicTechnicianEntity);
@@ -32,7 +32,7 @@ public class TechnicianController {
 	}
 
 	@GetMapping
-	@SaCheckLogin
+	//@SaCheckLogin
 	public R selectTechByPage(@Valid SelectTechByPageForm form) {
 		Map param = BeanUtil.beanToMap(form);
 		int page = form.getPage();
@@ -44,16 +44,16 @@ public class TechnicianController {
 		return R.ok().put("result", pageUtils);
 	}
 
-	@Log(title = "管理表格系统v2-技术者管理", businessType = BusinessType.UPDATE)
+	//@Log(title = "管理表格系统v2-技术者管理", businessType = BusinessType.UPDATE)
 	@PutMapping
-	@SaCheckLogin
+	//@SaCheckLogin
 	public R updateTech(@RequestBody @Valid UpdateTechForm form) {
 		technicianService.updateTech(BeanUtil.toBean(form, BasicTechnicianEntity.class));
 		return R.ok();
 	}
-	@Log(title = "管理表格系统v2-技术者管理", businessType = BusinessType.DELETE)
+	//@Log(title = "管理表格系统v2-技术者管理", businessType = BusinessType.DELETE)
 	@DeleteMapping
-	@SaCheckLogin
+	//@SaCheckLogin
 	public R deleteTech(@RequestBody @Valid DeleteTechForm form) {
 		technicianService.deleteTech(form.getIds());
 		return R.ok();

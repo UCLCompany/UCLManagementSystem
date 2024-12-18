@@ -134,16 +134,20 @@ public class OrganizationTwoServiceImpl implements OrganizationTwoService {
         for (Long organizationId : organizationIds) {
             OrganizationTwoVO orgVO = new OrganizationTwoVO();
             BasicOrganizationEntity org2 = getById(organizationId);
-            orgVO.setOrganizationId(org2.getOrganizationId());
+            orgVO.setOrganizationTwoId(org2.getOrganizationId());
             orgVO.setOrganizationName(org2.getOrganizationName());
             orgVO.setBelong(org2.getBelong());
 
+            //组织1
             Long id = relatedOrg1AndOrg2.getOrganizationOneByOrganizationTwoId(organizationId);
             if(id==null) {
                 orgVO.setOrganizationOneName(null);
                 orgVO.setOrganizationOneBelong(null);
             }else {
                 BasicOrganizationEntity org1 = organizationOneService.getById(id);
+                Long rId = relatedOrg1AndOrg2.getId(id, organizationId);
+                orgVO.setRelatedOrg1AndOrg2Id(rId);
+                orgVO.setOrganizationOneId(org1.getOrganizationId());
                 orgVO.setOrganizationOneName(org1.getOrganizationName());
                 orgVO.setOrganizationOneBelong(org1.getBelong());
             }

@@ -21,5 +21,5 @@ public class BasicTechnicianEntity extends BasicEntity {
     private LocalDate birthday;
     private String representative;
     private String belongCompany;
-
+    private String belongCompanyId;
 }

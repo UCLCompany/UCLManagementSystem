@@ -35,7 +35,7 @@ public class ProTechController {
 	}
 
 	@GetMapping
-	@SaCheckLogin
+	//@SaCheckLogin
 	public R selectProTechByPage(@Valid SelectProTechByPageForm form) {
 		Map param = BeanUtil.beanToMap(form);
 		int page = form.getPage();

@@ -19,4 +19,6 @@ public class SelectTechByPageForm {
 
 	private String roman;
 
+	private String belongCompanyId;
+
 }

@@ -38,12 +38,12 @@
 
     <insert id="insertTech" parameterType="ucl.group.excelSystem.api.db.pojo.BasicTechnicianEntity">
         insert into basic_v2_technician (
-            name, picture, katakana, roman, birthday, belong_company, representative,
-            del_flag, create_time, create_by, remark
+        name, picture, katakana, roman, birthday, belong_company, representative,
+        del_flag, create_time, create_by, remark, belong_company_id
         )
         values (
-            #{name}, #{picture}, #{katakana}, #{roman}, #{birthday}, #{belongCompany}, #{representative},
-            #{delFlag}, now(), #{createBy}, #{remark}
+        #{name}, #{picture}, #{katakana}, #{roman}, #{birthday}, #{belongCompany}, #{representative},
+        #{delFlag}, now(), #{createBy}, #{remark}, #{belongCompanyId}
         );
     </insert>
     <update id="updateTech" parameterType="ucl.group.excelSystem.api.db.pojo.BasicTechnicianEntity">
@@ -60,6 +60,7 @@
             update_time=NOW(),
             update_by=#{updateBy},
             remark=#{remark},
+            belong_company_id=#{belongCompanyId}
         </set>
         WHERE technician_id=#{technicianId};
     </update>
@@ -81,7 +82,7 @@
     <!-- 根据ID查询 -->
     <select id="searchById" resultMap="BasicTechnicianMap" parameterType="long">
         <include refid="technicianQuery"/>
-        where   bt.technician_id = #{technicianId}
+        where bt.technician_id = #{technicianId}
     </select>
     <select id="selectTechByPageCount" parameterType="map" resultType="java.lang.Long">
         select
@@ -101,7 +102,7 @@
         </if>
     </select>
     <select id="selectTechByPage" parameterType="map" resultType="java.util.HashMap">
-        SELECT
+        <!--SELECT
             technician_id AS technicianId,
             name AS technicianName,
             picture,
@@ -124,6 +125,25 @@
         <if test="roman!=null">
             and bt.roman like '%${roman}%'
         </if>
+        LIMIT ${length} OFFSET ${start}-->
+        SELECT
+        bt.technician_id AS technicianId,
+        bt.name AS technicianName,
+        bt.picture,
+        bt.katakana,
+        bt.roman,
+        bt.birthday,
+        pc.company_name AS belongCompany,
+        bt.representative,
+        bt.remark
+        from basic_v2_technician bt
+        LEFT JOIN
+        basic_v2_partner_company pc
+        ON bt.belong_company_id = pc.partner_company_id
+        WHERE bt.del_flag = 0
+        <if test="techName != null">AND bt.name LIKE '%${techName}%'</if>
+        <if test="katakan != null">AND bt.katakana LIKE '%${katakan}%'</if>
+        <if test="roman != null">AND bt.roman LIKE '%${roman}%'</if>
         LIMIT ${length} OFFSET ${start}
     </select>
 

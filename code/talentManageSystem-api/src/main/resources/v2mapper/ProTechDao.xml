@@ -55,6 +55,7 @@
         </if>
     </select>
 
+    <!--basic_v2_partner_company表中的company_name，terms_of_payment和coop_date-->
     <select id="selectProTechByPage" parameterType="Map" resultType="java.util.HashMap">
         select
         rpc.project_technician_id AS projectTechnicianId,
@@ -67,7 +68,9 @@
         bt.roman AS roman,
         bt.birthday AS birthday,
         bt.representative AS representative,
-        bt.belong_company AS belongCompany,
+        pc.company_name AS companyName,
+        pc.terms_of_payment AS termsOfPayment,
+        pc.coop_date AS coopDate,
         bc.customer_name AS customerName,
         bp.project_name AS projectName,
         bp.principal AS principal,
@@ -105,6 +108,8 @@
         basic_v2_project bp on rpc.project_id = bp.project_id
         join
         basic_v2_customer bc on bp.customer_id = bc.customer_id
+        join
+        basic_v2_partner_company pc on bt.belong_company_id = pc.partner_company_id
         where
         rpc.del_flag = 0
         and

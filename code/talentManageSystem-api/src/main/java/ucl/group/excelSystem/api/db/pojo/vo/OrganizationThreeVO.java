@@ -8,7 +8,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrganizationThreeVO {
-    private Long organizationId;
+    private Long organizationOneId;
+
+    private Long organizationTwoId;
+
+    private Long organizationThreeId;
+
+    private Long RelatedOrg1AndOrg2Id;
+
+    private Long RelatedOrg2AndOrg3Id;
 
     private String organizationName;
 

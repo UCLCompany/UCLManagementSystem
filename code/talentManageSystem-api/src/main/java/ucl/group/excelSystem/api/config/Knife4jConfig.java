@@ -6,9 +6,16 @@ import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.ApiKey;
+import springfox.documentation.service.AuthorizationScope;
+import springfox.documentation.service.SecurityReference;
 import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableSwagger2WebMvc
@@ -26,6 +33,8 @@ public class Knife4jConfig {//对于配置类要求可以看懂即可，不用�
                 // paths()：指定要生成哪个 URL 匹配模式下的 API 文档。这里使用 PathSelectors.any()，表示生成所有的 API 文档。
                 .paths(PathSelectors.any())
                 .build();
+/*                .securityContexts(Arrays.asList(SecurityContext()))
+                .securitySchemes((Arrays.asList(apiKey())));*/
     }
 
     //文档信息配置
@@ -37,5 +46,20 @@ public class Knife4jConfig {//对于配置类要求可以看懂即可，不用�
                 .version("1.0")
                 .build();
     }
+
+/*    private SecurityContext SecurityContext(){
+        return SecurityContext.builder().securityReferences(defaultAuth()).build();
+    }
+
+    private ApiKey apiKey(){
+        return new ApiKey("Authorization","Authorization","header");
+    }
+
+    private List<SecurityReference> defaultAuth(){
+        AuthorizationScope authorizationScope = new AuthorizationScope("global","accessEverything");
+        AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
+        authorizationScopes[0] = authorizationScope;
+        return Arrays.asList(new SecurityReference("Authorization",authorizationScopes));
+    }*/
 }
 

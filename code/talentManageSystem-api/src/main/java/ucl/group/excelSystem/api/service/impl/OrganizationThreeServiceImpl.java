@@ -116,29 +116,39 @@ public class OrganizationThreeServiceImpl implements OrganizationThreeService {
         int start = (int) param.get("start");
         int page = (int) param.get("page");
         List<OrganizationThreeVO> list = new ArrayList<>();
+        // org3 id
         List<Long> organizationIds = organizationThreeDao.getAllId();
         for (Long organizationId : organizationIds) {
             OrganizationThreeVO orgVO = new OrganizationThreeVO();
             BasicOrganizationEntity org3 = organizationThreeDao.getById(organizationId);
-            orgVO.setOrganizationId(org3.getOrganizationId());
+            orgVO.setOrganizationThreeId(org3.getOrganizationId());
             orgVO.setOrganizationName(org3.getOrganizationName());
             orgVO.setBelong(org3.getBelong());
 
+            // org2
             Long org2Id = relatedOrg2AndOrg3.selectOrg2AndOrg3ByOrg3Id(organizationId);
             if (org2Id == null) {
                 orgVO.setOrganizationTwoName(null);
                 orgVO.setOrganizationTwoBelong(null);
             } else {
                 BasicOrganizationEntity org2 = organizationTwoService.getById(org2Id);
+                Long rId23 = relatedOrg2AndOrg3.getId(org2Id, organizationId);
+                orgVO.setRelatedOrg2AndOrg3Id(rId23);
+                orgVO.setOrganizationTwoId(org2Id);
                 orgVO.setOrganizationTwoName(org2.getOrganizationName());
                 orgVO.setOrganizationTwoBelong(org2.getBelong());
             }
+
+            //org1
             Long org1Id = relatedOrg1AndOrg2.getOrganizationOneByOrganizationTwoId(org2Id);
             if (org1Id == null) {
                 orgVO.setOrganizationOneName(null);
                 orgVO.setOrganizationOneBelong(null);
             } else {
                 BasicOrganizationEntity org1 = organizationOneService.getById(org1Id);
+                Long rId12 = relatedOrg1AndOrg2.getId(org1Id, org2Id);
+                orgVO.setRelatedOrg1AndOrg2Id(rId12);
+                orgVO.setOrganizationOneId(org1Id);
                 orgVO.setOrganizationOneName(org1.getOrganizationName());
                 orgVO.setOrganizationOneBelong(org1.getBelong());
             }

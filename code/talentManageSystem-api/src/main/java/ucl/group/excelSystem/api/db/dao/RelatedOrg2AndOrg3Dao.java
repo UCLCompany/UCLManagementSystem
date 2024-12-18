@@ -14,4 +14,7 @@ public interface RelatedOrg2AndOrg3Dao {
     List<Long> selectOrg2AndOrg3ByOrg2Id(Long org2Id);
 
     Long selectOrg2AndOrg3ByOrg3Id(Long org3Id);
+
+    Long getId(Long org2Id, Long org3Id);
+
 }

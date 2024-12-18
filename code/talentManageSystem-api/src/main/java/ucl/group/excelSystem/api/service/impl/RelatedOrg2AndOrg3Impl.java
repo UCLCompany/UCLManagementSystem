@@ -54,4 +54,9 @@ public class RelatedOrg2AndOrg3Impl implements RelatedOrg2AndOrg3 {
     public Long selectOrg2AndOrg3ByOrg3Id(Long org3Id) {
         return relatedOrg2AndOrg3Dao.selectOrg2AndOrg3ByOrg3Id(org3Id);
     }
+
+    @Override
+    public Long getId(Long org2Id, Long org3Id) {
+        return relatedOrg2AndOrg3Dao.getId(org2Id, org3Id);
+    }
 }

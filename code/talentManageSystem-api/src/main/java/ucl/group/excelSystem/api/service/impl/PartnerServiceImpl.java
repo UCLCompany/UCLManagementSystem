@@ -3,6 +3,7 @@ package ucl.group.excelSystem.api.service.impl;
 import cn.hutool.core.map.MapUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ucl.group.excelSystem.api.db.dao.PartnerDao;
 import ucl.group.excelSystem.api.db.pojo.BasicPartnerEntity;
 import ucl.group.excelSystem.api.service.PartnerService;
@@ -20,16 +21,19 @@ public class PartnerServiceImpl implements PartnerService {
     private PartnerDao partnerDao;
 
     @Override
+    @Transactional
     public void addPartner(BasicPartnerEntity basicPartnerEntity) {
         partnerDao.addPartner(basicPartnerEntity);
     }
 
     @Override
+    @Transactional
     public void updatePartner(BasicPartnerEntity basicPartnerEntity) {
         partnerDao.updatePartner(basicPartnerEntity);
     }
 
     @Override
+    @Transactional
     public void deletePartner(List<Integer> companyids) {
         if (companyids == null || companyids.isEmpty()) {
             throw new IllegalArgumentException("IDs list cannot be null or empty");
@@ -38,6 +42,7 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     @Override
+    @Transactional
     public PageUtils selectCompanyByPage(Map param) {
         ArrayList<HashMap> list = null;
         long count = partnerDao.selectCompanyByPageCount();
@@ -50,6 +55,7 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     @Override
+    @Transactional
     public ArrayList<HashMap> selectCompany() {
         ArrayList<HashMap> list = partnerDao.selectCompany();
         return list;

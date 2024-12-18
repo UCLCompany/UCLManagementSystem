@@ -18,4 +18,6 @@ public interface RelatedOrg1AndOrg2 {
 
     //往上查
     Long getOrganizationOneByOrganizationTwoId(Long org2Id);
+
+    Long getId(Long org1Id, Long org2Id);
 }

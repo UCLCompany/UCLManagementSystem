@@ -220,29 +220,6 @@ public class ProTechServiceImpl implements ProTechService {
 
         if (count > 0) {
             list = proTechDao.selectProTechByPage(param);
-//           he_jiale编写，父子节点的数据相同问题，不通过前端实现，通过修改后端的返回值实现。但问题是此做法会造成前端颜色显示异常，建议使用前端实现或新增字段
-//            //遍历HashMap找到父子结点
-//            // 创建一个以 parentId 为 key 的映射，用于快速查找父节点
-//            Map<Long, Map<String, Object>> parentMap = new HashMap<>();
-//            for (Map<String, Object> node : list) {
-//                Long parentId = (Long) node.get("parentId");
-//                if(parentId==0L){
-//                    parentMap.put((Long) node.get("projectTechnicianId"), node);
-//                }
-//            }
-//            // 更新子节点的 cBeginMonth 和 cEndMonth
-//            for (Map<String, Object> node : list) {
-//                Long parentId = (Long) node.get("parentId");
-//                if (parentId != 0) {
-//                    Map<String, Object> parentNode = parentMap.get(parentId);
-//                    if (parentNode != null) {
-//                        // 从父节点获取 cBeginMonth 和 cEndMonth 并设置到当前子节点
-//                        node.put("cBeginMonth", parentNode.get("cBeginMonth"));
-//                        node.put("cEndMonth", parentNode.get("cEndMonth"));
-//                        node.put("stopMonth", parentNode.get("stopMonth"));
-//                    }
-//                }
-//            }
         } else {
             list = new ArrayList<>();
         }

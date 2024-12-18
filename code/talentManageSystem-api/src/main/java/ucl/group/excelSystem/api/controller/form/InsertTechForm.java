@@ -24,6 +24,8 @@ public class InsertTechForm {
 
 	private String representative;
 
+	private String belongCompanyId;
+
 	private String remark;
 
 }

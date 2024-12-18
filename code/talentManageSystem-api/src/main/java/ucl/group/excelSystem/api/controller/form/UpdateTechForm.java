@@ -27,6 +27,8 @@ public class UpdateTechForm {
 
 	private String representative;
 
+	private String belongCompanyId;
+
 	private String remark;
 
 }

@@ -51,5 +51,16 @@
         and
         del_flag = 0
     </select>
+    <select id="getId" resultType="java.lang.Long">
+        select
+        org2_cross_org3_id
+        from related_v2_org2_cross_org3
+        where
+        organization_two_id = #{org2Id}
+        and
+        organization_three_id = #{org3Id}
+        and
+        del_flag = 0
+    </select>
 
 </mapper>
