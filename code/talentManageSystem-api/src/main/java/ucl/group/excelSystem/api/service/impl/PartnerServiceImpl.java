@@ -18,20 +18,12 @@ import java.util.Map;
 public class PartnerServiceImpl implements PartnerService {
     @Resource
     private PartnerDao partnerDao;
-    @Override
-    public BasicPartnerEntity getPartnerByName(String partnerCompanyName) {
-        return partnerDao.getPartnerByName(partnerCompanyName);
-    }
 
     @Override
     public void addPartner(BasicPartnerEntity basicPartnerEntity) {
         partnerDao.addPartner(basicPartnerEntity);
     }
 
-    @Override
-    public List<BasicPartnerEntity> getAllPartners() {
-        return partnerDao.getAllPartners();
-    }
     @Override
     public void updatePartner(BasicPartnerEntity basicPartnerEntity) {
         partnerDao.updatePartner(basicPartnerEntity);

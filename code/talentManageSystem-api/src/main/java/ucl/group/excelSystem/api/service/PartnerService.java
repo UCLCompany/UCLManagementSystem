@@ -11,8 +11,6 @@ import java.util.Map;
 
 @Service
 public interface PartnerService {
-    public BasicPartnerEntity getPartnerByName(String partnerCompanyName);
-    public List<BasicPartnerEntity> getAllPartners();
     public void addPartner(BasicPartnerEntity basicPartnerEntity);
     public void updatePartner(BasicPartnerEntity basicPartnerEntity);
     public void deletePartner(List<Integer> companyids);

@@ -223,21 +223,21 @@ export default {
 			dataListSelections: [],
 		};
 	},
-  computed: {
-    visibleColumns() {
-      const manualProps = [
-        "partnerCompanyName",
-        "partnerpostalCode",
-        "partnerCompanyAddress",
-        "termsofPayment",
-        "representativeName",
-        "coopDate",
-      ];
-
-      // 过滤掉与手动定义列重复的项
-      return this.columns.filter((column) => !manualProps.includes(column.prop));
-    },
-  },
+  // computed: {
+  //   visibleColumns() {
+  //     const manualProps = [
+  //       "partnerCompanyName",
+  //       "partnerpostalCode",
+  //       "partnerCompanyAddress",
+  //       "termsofPayment",
+  //       "representativeName",
+  //       "coopDate",
+  //     ];
+  //
+  //     // 过滤掉与手动定义列重复的项
+  //     return this.columns.filter((column) => !manualProps.includes(column.prop));
+  //   },
+  // },
 	methods: {
 		loadCompanyList() {
 			let that = this;

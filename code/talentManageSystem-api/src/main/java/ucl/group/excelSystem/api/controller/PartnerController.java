@@ -22,16 +22,7 @@ public class PartnerController {
     @Autowired
     private PartnerService partnerService;
 
-//    @GetMapping("/getPartnerByName")
-//    public R getPartnerByName(@RequestParam("partnerCompanyName") String partnerCompanyName) {
-//        BasicPartnerEntity basicPartnerEntity=partnerService.getPartnerByName(partnerCompanyName);
-//        return R.ok().put("result", basicPartnerEntity);
-//    }
-    @GetMapping("/getAllPartner")
-    public R getAllPartner() {
-        List<BasicPartnerEntity> basicPartnerEntity=partnerService.getAllPartners();
-        return R.ok().put("result",basicPartnerEntity);
-    }
+
     @PostMapping("/Partner")
     public R addPartner(@RequestBody BasicPartnerEntity basicPartnerEntity) {
         partnerService.addPartner(basicPartnerEntity);
@@ -51,6 +42,7 @@ public class PartnerController {
         partnerService.deletePartner(companyIds);
         return R.ok();
     }
+//    分页搜索，根据名字搜索
     @GetMapping("/getpartnerById")
     public R selectCompanyByPage(@Valid SelectCompanyByPageForm selectCompanyByPageForm) {
         Map param= BeanUtil.beanToMap(selectCompanyByPageForm);
@@ -62,6 +54,7 @@ public class PartnerController {
 
         return R.ok().put("result", pageUtils);
     }
+//    遍历并去重
     @GetMapping("/company")
     public R selectCustomer() {
         ArrayList<HashMap> list = partnerService.selectCompany();

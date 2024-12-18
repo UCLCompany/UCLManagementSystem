@@ -10,31 +10,7 @@ import java.util.Map;
 
 @Mapper
 public interface PartnerDao {
-//    遍历
-    @Results({
-            @Result(column = "partner_company_id", property = "partnerCompanyId"),
-            @Result(column = "company_name", property = "partnerCompanyName"),
-            @Result(column = "postalCode", property = "partnerpostalCode"),
-            @Result(column = "address", property = "partnerCompanyAddress"),
-            @Result(column = "representitive_name", property = "representativeName"),
-            @Result(column = "terms_of_payment", property = "termsofPayment"),
-            @Result(column = "coop_date", property = "coopDate"),
-    })
-    @Select("select * from basic_v2_partner_company")
-    List<BasicPartnerEntity> getAllPartners();
-//    根据名字查询
 
-    @Select("select partner_company_id, company_name,postalCode,address,representitive_name,terms_of_payment,coop_date from basic_v2_partner_company where company_name=#{partnerCompanyName}")
-    @Results({
-            @Result(column = "partner_company_id", property = "partnerCompanyId"),
-            @Result(column = "company_name", property = "partnerCompanyName"),
-            @Result(column = "postalCode", property = "partnerpostalCode"),
-            @Result(column = "address", property = "partnerCompanyAddress"),
-            @Result(column = "representitive_name", property = "representativeName"),
-            @Result(column = "terms_of_payment", property = "termsofPayment"),
-            @Result(column = "coop_date", property = "coopDate"),
-    })
-    public BasicPartnerEntity getPartnerByName(String partnerCompanyName);
 
 //    增加
     @Insert("INSERT INTO basic_v2_partner_company (partner_company_id, company_name,postalCode,address,representitive_name,terms_of_payment,coop_date) VALUES (#{partnerCompanyId}, #{partnerCompanyName},#{partnerpostalCode},#{partnerCompanyAddress},#{representativeName},#{termsofPayment},#{coopDate})")
@@ -55,17 +31,17 @@ public interface PartnerDao {
     })
     public void deletePartnerById(@Param("ids") List<Integer> companyids);
 
-//    分页查询
+//    分页查询,根据名称查询
 
     @Select({
             "<script>",
             "SELECT",
             "    partner_company_id AS partnerCompanyId,",
             "    company_name AS partnerCompanyName,",
-            "    postalCode AS partnerPostalCode,",
+            "    postalCode AS partnerpostalCode,",
             "    address AS partnerCompanyAddress,",
             "    representitive_name AS representativeName,",
-            "    terms_of_payment AS termsOfPayment,",
+            "    terms_of_payment AS termsofPayment,",
             "    coop_date AS coopDate,",
             "    remark",
             "FROM basic_v2_partner_company",
@@ -82,6 +58,7 @@ public interface PartnerDao {
     @Select("SELECT COUNT(*) FROM basic_v2_partner_company")
 
     public Long selectCompanyByPageCount();
+//    遍历并去重
     @Select({
             "<script>",
             "SELECT",
