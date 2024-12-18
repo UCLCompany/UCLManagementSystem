@@ -21,7 +21,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v2/customer")
 public class CustomerController {
-
     @Resource
     private CustomerService customerService;
     @PostMapping

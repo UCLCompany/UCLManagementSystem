@@ -28,6 +28,7 @@ import Customer from "../views/excelSystem/customer.vue"
 import UserTable from "../views/excelSystem/user_table.vue"
 import ProjectTable from "../views/excelSystem/project_table.vue"
 import WorkTable from "../views/excelSystem/work_table.vue"
+import Company from "../views/excelSystem/company.vue"
 
 const routes = [
 	{
@@ -155,6 +156,17 @@ const routes = [
 					isTab: true
 				}
 			},
+			// {
+			// 	path: "/manuals",
+			// 	name: "Manuals",
+			// 	// component: () => import('../views/excelSystem/Manual.vue'),	
+			// 	component: Manuals,
+			// 	meta: {
+			// 		title: '系统设置',
+			// 		isTab: true
+			// 	}
+			//   },
+			  
 			// 表格管理
 			{
 				path: '/appoint',
@@ -173,6 +185,14 @@ const routes = [
 					isTab: true
 				}
 			}, {
+				path: '/company',
+				name: 'Company',
+				component: Company,
+				meta: {
+					title: '協力会社情報',
+					isTab: true
+				}
+			},{
 				path: '/technician',
 				name: 'Technician',
 				component: Technician,
