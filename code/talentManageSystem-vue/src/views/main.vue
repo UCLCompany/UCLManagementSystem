@@ -417,7 +417,17 @@
             />
             <span slot="title">プロジェクト管理</span>
           </el-menu-item>
-
+          <el-menu-item
+              index="客户管理"
+              @click="$router.push({ name: 'Customer' })"
+              v-if="isAuth(['price_search'])"
+          >
+            <SvgIcon
+                name="night_fill"
+                class="icon-svg"
+            />
+            <span slot="title">顧客管理</span>
+          </el-menu-item>
           <el-menu-item
             index="company"
             v-if="isAuth(['price_search'])"
