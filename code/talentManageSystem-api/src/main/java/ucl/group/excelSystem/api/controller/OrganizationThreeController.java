@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ucl.group.excelSystem.api.controller.request.*;
 import ucl.group.excelSystem.api.db.pojo.BasicCustomerEntity;
 import ucl.group.excelSystem.api.db.pojo.BasicOrganizationEntity;
+import ucl.group.excelSystem.api.db.pojo.bo.InsertOrganizationBO;
 import ucl.group.excelSystem.api.db.pojo.bo.UpdateOrganizationBO;
 import ucl.group.excelSystem.api.service.OrganizationThreeService;
 import ucl.group.talentManageSystem.api.common.PageUtils;
@@ -40,8 +41,11 @@ public class OrganizationThreeController {
     @Log(title = "管理表格系统v2-组织表1管理", businessType = BusinessType.INSERT)
     //@SaCheckLogin
     public R insertOrganizationThree(@RequestBody @Valid InsertOrganizationRequest request){
-        BasicOrganizationEntity basicOrganizationEntity = BeanUtil.toBean(request, BasicOrganizationEntity.class);
-        organizationThreeService.insertOrganizationThree(basicOrganizationEntity);
+        InsertOrganizationBO insertOrganizationBO = new InsertOrganizationBO();
+        insertOrganizationBO.setPreOrganizationId(request.getPreOrganizationId());
+        insertOrganizationBO.setOrganizationName(request.getOrganizationName());
+        insertOrganizationBO.setBelong(request.getBelong());
+        organizationThreeService.insertOrganizationThree(insertOrganizationBO);
         return R.ok();
     }
     @PutMapping("/updateOrganizationThree")

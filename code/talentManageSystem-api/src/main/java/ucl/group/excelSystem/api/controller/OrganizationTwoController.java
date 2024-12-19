@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ucl.group.excelSystem.api.controller.request.*;
 import ucl.group.excelSystem.api.db.pojo.BasicCustomerEntity;
 import ucl.group.excelSystem.api.db.pojo.BasicOrganizationEntity;
+import ucl.group.excelSystem.api.db.pojo.bo.InsertOrganizationBO;
 import ucl.group.excelSystem.api.db.pojo.bo.UpdateOrganizationBO;
 import ucl.group.excelSystem.api.service.OrganizationTwoService;
 import ucl.group.excelSystem.api.service.RelatedOrg1AndOrg2;
@@ -42,8 +43,11 @@ public class OrganizationTwoController {
     @Log(title = "管理表格系统v2-组织表1管理", businessType = BusinessType.INSERT)
     //@SaCheckLogin
     public R insertOrganizationTwo(@RequestBody @Valid InsertOrganizationRequest request){
-        BasicOrganizationEntity basicOrganizationEntity = BeanUtil.toBean(request, BasicOrganizationEntity.class);
-        organizationTwoService.insertOrganizationTwo(basicOrganizationEntity);
+        InsertOrganizationBO insertOrganizationBO = new InsertOrganizationBO();
+        insertOrganizationBO.setOrganizationName(request.getOrganizationName());
+        insertOrganizationBO.setBelong(request.getBelong());
+        insertOrganizationBO.setPreOrganizationId(request.getPreOrganizationId());
+        organizationTwoService.insertOrganizationTwo(insertOrganizationBO);
         return R.ok();
     }
     @PutMapping("/updateOrganizationTwo")

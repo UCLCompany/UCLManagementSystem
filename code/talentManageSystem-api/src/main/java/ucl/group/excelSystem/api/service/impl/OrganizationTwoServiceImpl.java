@@ -10,6 +10,7 @@ import ucl.group.excelSystem.api.db.dao.OrganizationOneDao;
 import ucl.group.excelSystem.api.db.dao.OrganizationTwoDao;
 import ucl.group.excelSystem.api.db.pojo.BasicCustomerEntity;
 import ucl.group.excelSystem.api.db.pojo.BasicOrganizationEntity;
+import ucl.group.excelSystem.api.db.pojo.bo.InsertOrganizationBO;
 import ucl.group.excelSystem.api.db.pojo.bo.UpdateOrganizationBO;
 import ucl.group.excelSystem.api.db.pojo.vo.OrganizationTwoVO;
 import ucl.group.excelSystem.api.service.*;
@@ -69,10 +70,13 @@ public class OrganizationTwoServiceImpl implements OrganizationTwoService {
 
     @Override
     @Transactional
-    public void insertOrganizationTwo(BasicOrganizationEntity basicOrganizationEntity) {
-        //先获取所属组织的 id 值
-        Long preOrganization = basicOrganizationEntity.getOrganizationId();
+    public void insertOrganizationTwo(InsertOrganizationBO insertOrganizationBO) {
+        BasicOrganizationEntity basicOrganizationEntity = new BasicOrganizationEntity();
+        basicOrganizationEntity.setOrganizationName(insertOrganizationBO.getOrganizationName());
+        basicOrganizationEntity.setBelong(insertOrganizationBO.getBelong());
         basicOrganizationEntity.setOrganizationId(null);
+        //先获取所属组织的 id 值
+        Long preOrganization = insertOrganizationBO.getPreOrganizationId();
         //再获取插入的数据的 id
         organizationTwoDao.insertOrganizationTwo(basicOrganizationEntity);
         long id = basicOrganizationEntity.getOrganizationId();

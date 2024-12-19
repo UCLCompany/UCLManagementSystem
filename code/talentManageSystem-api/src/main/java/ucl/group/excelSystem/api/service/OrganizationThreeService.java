@@ -3,6 +3,7 @@ package ucl.group.excelSystem.api.service;
 import org.apache.ibatis.annotations.Param;
 import ucl.group.excelSystem.api.db.pojo.BasicCustomerEntity;
 import ucl.group.excelSystem.api.db.pojo.BasicOrganizationEntity;
+import ucl.group.excelSystem.api.db.pojo.bo.InsertOrganizationBO;
 import ucl.group.excelSystem.api.db.pojo.bo.UpdateOrganizationBO;
 import ucl.group.talentManageSystem.api.common.PageUtils;
 
@@ -14,7 +15,7 @@ public interface OrganizationThreeService {
 
     PageUtils selectOrganizationThreeByPage(@Param("param") Map<String, Object> param);
 
-    void insertOrganizationThree(@Param("basicOrganizationEntity")BasicOrganizationEntity basicOrganizationEntity);
+    void insertOrganizationThree(@Param("insertOrganizationBO") InsertOrganizationBO insertOrganizationBO);
 
     void updateOrganizationThree(@Param("bean") UpdateOrganizationBO bean);
 
