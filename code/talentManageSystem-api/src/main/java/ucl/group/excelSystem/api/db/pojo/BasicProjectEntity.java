@@ -1,5 +1,6 @@
 package ucl.group.excelSystem.api.db.pojo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import ucl.group.talentManageSystem.api.db.pojo.BasicEntity;
 
@@ -14,5 +15,7 @@ public class BasicProjectEntity extends BasicEntity {
     private String projectName;
     private String principal;
     private String  principalCompany;
-
+    private String category;
+    private String uclPrincipal;
+    private String principalId;
 }

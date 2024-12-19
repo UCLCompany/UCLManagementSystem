@@ -53,6 +53,11 @@ public class InsertProTechForm {
 	@JsonProperty("cLowerHours")
 	private BigDecimal cLowerHours;
 	/**
+	 * 契約書类型，1：注文书；2：出向个别契约书
+	 */
+	@JsonProperty("contractType")
+	private int contractType;
+	/**
 	 * 契約書
 	 */
 	@JsonProperty("contract")

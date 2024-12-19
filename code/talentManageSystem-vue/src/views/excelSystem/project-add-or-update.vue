@@ -36,6 +36,12 @@
         <el-form-item label="案件責任者所属（顧客先）：" prop="principalCompany">
           <el-input v-model="dataForm.principalCompany" clearable/>
         </el-form-item>
+        <el-form-item label="カテグリー" prop="category">
+          <el-input v-model="dataForm.category" clearable/>
+        </el-form-item>
+        <el-form-item label="UCL開発部担当者" prop="uclPrincipal">
+          <el-input v-model="dataForm.uclPrincipal" clearable/>
+        </el-form-item>
         <el-form-item label="備考：" prop="remark">
           <el-input type="textarea" rows="1" v-model="dataForm.remark" clearable/>
         </el-form-item>
@@ -125,6 +131,8 @@ export default {
             projectName: that.dataForm.projectName,
             principal: that.dataForm.principal,
             principalCompany: that.dataForm.principalCompany,
+            category: that.dataForm.category,
+            uclPrincipal: that.dataForm.uclPrincipal,
             remark: that.dataForm.remark,
           };
           console.log("data1111: " + that.dataForm)

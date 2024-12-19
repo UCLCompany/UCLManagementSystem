@@ -12,7 +12,7 @@
             h_lower_hours, h_higher_hours, h_reduct_price, h_increase_price,
             h_price, standard_hours, contract, contract_num,
             del_flag, create_time, create_by, remark, parent_id,
-            c_real_begin_month, c_real_end_month, real_stop_month
+            c_real_begin_month, c_real_end_month, real_stop_month,contract_type
         )
         values (
             #{technicianId}, #{projectId}, #{status}, #{cBeginMonth}, #{cEndMonth},
@@ -21,7 +21,7 @@
             #{hLowerHours}, #{hHigherHours}, #{hReductPrice}, #{hIncreasePrice},
             #{hPrice}, #{standardHours}, #{contract}, #{contractNum},
             #{delFlag}, NOW(), #{createBy}, #{remark}, #{parentId},
-            #{cRealBeginMonth}, #{cRealEndMonth}, #{realStopMonth}
+            #{cRealBeginMonth}, #{cRealEndMonth}, #{realStopMonth},#{contractType}
         )
     </insert>
 
@@ -96,7 +96,8 @@
         rpc.parent_id AS parentId,
         rpc.c_real_begin_month AS cRealBeginMonth,
         rpc.c_real_end_month AS cRealEndMonth,
-        rpc.real_stop_month AS realStopMonth
+        rpc.real_stop_month AS realStopMonth,
+        rpc.contract_type AS contractType
         from
         related_v2_project_technician rpc
         join
@@ -300,6 +301,9 @@
             </if>
             <if test="updateBy != null">
                 update_by = #{updateBy},
+            </if>
+            <if test="contractType != null">
+                contract_type = #{contractType},
             </if>
             update_time = NOW()
         </set>

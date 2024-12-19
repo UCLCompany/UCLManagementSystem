@@ -65,10 +65,10 @@
               <el-col :span="11">
                 <el-form-item
                   label="所属（会社名）："
-                  prop="belongCompany"
+                  prop="companyName"
                 >
                   <el-input
-                    v-model="dataForm.belongCompany"
+                    v-model="dataForm.companyName"
                     disabled
                   />
                 </el-form-item>
@@ -111,6 +111,8 @@
                 </el-form-item>
               </el-col>
               <el-col :span="11">
+
+                <!-- 开始 -->
                 <el-form-item
                   label="契約書："
                   prop="contract"
@@ -123,20 +125,22 @@
                     :on-error="updateFileError"
                     :show-file-list="false"
                   >
-                    <el-button
-                      type="text"
-                      v-if="this.dataForm.contract != null && this.dataForm.contract != '' "
-                    >
-                      {{ getFileName(dataForm.contract) }}
-                    </el-button>
-                    <el-button
-                      v-else
-                      type="text"
-                    >
-                      アップロード
-                    </el-button>
+                    <el-button type="primary">アップロード</el-button>
                   </el-upload>
+                  <br>
+                  <!-- 显示传上去的文件 -->
+                  <span
+                    v-for="(oneFile,index) in dataForm.contract"
+                    :key="index"
+                  >
+                    &nbsp;&nbsp;&nbsp;{{ oneFile.substring(oneFile.lastIndexOf('/') + 1) }} &nbsp; <el-button
+                      type="text"
+                      @click="deleteFileHandle(index)"
+                    >消去</el-button>
+                  </span>
                 </el-form-item>
+
+                <!-- 结束 -->
               </el-col>
             </el-row>
             <el-row :gutter="20">
@@ -186,15 +190,26 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="11">
+              <el-col :span="10">
                 <el-form-item
-                  label="下請単価："
-                  prop="hPrice"
+                  label="月こと契約書種類："
+                  prop="contractType"
                 >
-                  <el-input
-                    v-model="dataForm.hPrice"
+                  <el-select
+                    v-model="dataForm.contractType"
                     clearable
-                  />
+                    style="width: 100%"
+                    @change="testadd()"
+                  >
+                    <el-option
+                      label="注文書"
+                      value=1
+                    >注文書</el-option>
+                    <el-option
+                      label="出向個別契約書"
+                      value=2
+                    >出向個別契約書</el-option>
+                  </el-select>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -220,19 +235,28 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="11">
+              <el-col :span="10">
                 <el-form-item
-                  label="下請开始月："
-                  prop="hBeginMonth"
+                  label="お支払方法"
+                  prop="termsOfPayment"
+                >
+                  <el-input
+                    v-model="dataForm.termsOfPayment"
+                    disabled
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="10"></el-col>
+              <el-col :span="10">
+                <el-form-item
+                  label="下請締結日"
+                  prop="coopDate"
                 >
                   <el-date-picker
-                    v-model="dataForm.hBeginMonth"
-                    type="month"
-                    placeholder="年月を選びます"
-                    format="YYYY-MM"
-                    value-format="YYYY-MM"
-                    clearable
-                    style="width: 100%"
+                    v-model="dataForm.coopDate"
+                    disabled
                   />
                 </el-form-item>
               </el-col>
@@ -251,17 +275,12 @@
               </el-col>
               <el-col :span="11">
                 <el-form-item
-                  label="下請结束月："
-                  prop="hEndMonth"
+                  label="下請単価："
+                  prop="hPrice"
                 >
-                  <el-date-picker
-                    v-model="dataForm.hEndMonth"
-                    type="month"
-                    placeholder="年月を選びます"
-                    format="YYYY-MM"
-                    value-format="YYYY-MM"
+                  <el-input
+                    v-model="dataForm.hPrice"
                     clearable
-                    style="width: 100%"
                   />
                 </el-form-item>
               </el-col>
@@ -577,10 +596,10 @@
               <el-col :span="11">
                 <el-form-item
                   label="所属（会社名）："
-                  prop="belongCompany"
+                  prop="companyName"
                 >
                   <el-input
-                    v-model="dataForm.belongCompany"
+                    v-model="dataForm.companyName"
                     disabled
                   />
                 </el-form-item>
@@ -623,6 +642,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="11">
+                <!-- 开始 -->
                 <el-form-item
                   label="契約書："
                   prop="contract"
@@ -635,20 +655,22 @@
                     :on-error="updateFileError"
                     :show-file-list="false"
                   >
-                    <el-button
-                      type="text"
-                      v-if="this.dataForm.contract != null && this.dataForm.contract != '' "
-                    >
-                      {{ getFileName(dataForm.contract) }}
-                    </el-button>
-                    <el-button
-                      v-else
-                      type="text"
-                    >
-                      アップロード
-                    </el-button>
+                    <el-button type="primary">アップロード</el-button>
                   </el-upload>
+                  <br>
+                  <!-- 显示传上去的文件 -->
+                  <span
+                    v-for="(oneFile,index) in dataForm.contract"
+                    :key="index"
+                  >
+                    &nbsp;&nbsp;&nbsp;{{ oneFile.substring(oneFile.lastIndexOf('/') + 1) }} &nbsp; <el-button
+                      type="text"
+                      @click="deleteFileHandle(index)"
+                    >消去</el-button>
+                  </span>
                 </el-form-item>
+
+                <!-- 结束 -->
               </el-col>
             </el-row>
             <el-row :gutter="20">
@@ -698,15 +720,28 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="11">
+              <el-col :span="10">
                 <el-form-item
-                  label="下請単価："
-                  prop="hPrice"
+                  label="月こと契約書種類："
+                  prop="contractType"
                 >
-                  <el-input
-                    v-model="dataForm.hPrice"
+                  <el-select
+                    v-model="dataForm.contractType"
                     clearable
-                  />
+                    style="width: 100%"
+                    @change="testmodify()"
+                  >
+                    <el-option
+                      label="注文書"
+                      value=1
+                    >注文書
+                    </el-option>
+                    <el-option
+                      label="出向個別契約書"
+                      value=2
+                    >出向個別契約書
+                    </el-option>
+                  </el-select>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -732,23 +767,33 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="11">
+              <el-col :span="10">
                 <el-form-item
-                  label="下請开始月："
-                  prop="hBeginMonth"
+                  label="お支払方法"
+                  prop="termsOfPayment"
                 >
-                  <el-date-picker
-                    v-model="dataForm.hBeginMonth"
-                    type="month"
-                    placeholder="年月を選びます"
-                    format="YYYY-MM"
-                    value-format="YYYY-MM"
-                    clearable
-                    style="width: 100%"
+                  <el-input
+                    v-model="dataForm.termsOfPayment"
+                    disabled
                   />
                 </el-form-item>
               </el-col>
             </el-row>
+            <el-row :gutter="20">
+              <el-col :span="10"></el-col>
+              <el-col :span="10">
+                <el-form-item
+                  label="下請締結日"
+                  prop="coopDate"
+                >
+                  <el-date-picker
+                    v-model="dataForm.coopDate"
+                    disabled
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
+
             <el-row :gutter="20">
               <el-col :span="10">
                 <el-form-item
@@ -763,17 +808,12 @@
               </el-col>
               <el-col :span="11">
                 <el-form-item
-                  label="下請结束月："
-                  prop="hEndMonth"
+                  label="下請単価："
+                  prop="hPrice"
                 >
-                  <el-date-picker
-                    v-model="dataForm.hEndMonth"
-                    type="month"
-                    placeholder="年月を選びます"
-                    format="YYYY-MM"
-                    value-format="YYYY-MM"
+                  <el-input
+                    v-model="dataForm.hPrice"
                     clearable
-                    style="width: 100%"
                   />
                 </el-form-item>
               </el-col>
@@ -1022,13 +1062,6 @@
             </el-row>
           </el-col>
         </el-row>
-        <!--        <el-row :gutter="20" style="position: absolute; top: 18%; left: 4%">-->
-        <!--          <el-col :span="11">-->
-        <!--            <el-form-item>-->
-        <!--              <el-button @click="resetForm">清空</el-button>-->
-        <!--            </el-form-item>-->
-        <!--          </el-col>-->
-        <!--        </el-row>-->
       </el-form>
     </el-scrollbar>
 
@@ -1091,10 +1124,10 @@
               <el-col :span="11">
                 <el-form-item
                   label="所属（会社名）："
-                  prop="belongCompany"
+                  prop="companyName"
                 >
                   <el-input
-                    v-model="dataForm.belongCompany"
+                    v-model="dataForm.companyName"
                     disabled
                   />
                 </el-form-item>
@@ -1137,23 +1170,35 @@
                 </el-form-item>
               </el-col>
               <el-col :span="11">
+                <!-- 开始 -->
                 <el-form-item
                   label="契約書："
                   prop="contract"
                 >
-                  <el-button
-                    type="text"
-                    v-if="this.dataForm.contract != null && this.dataForm.contract != '' "
+                  <el-upload
+                    :action="action"
+                    :headers="{ token: token }"
+                    with-credentials="true"
+                    :on-success="updateFileSuccess"
+                    :on-error="updateFileError"
+                    :show-file-list="false"
                   >
-                    {{ getFileName(dataForm.contract) }}
-                  </el-button>
-                  <el-button
-                    v-else
-                    type="text"
+                    <el-button type="primary">アップロード</el-button>
+                  </el-upload>
+                  <br>
+                  <!-- 显示传上去的文件 -->
+                  <span
+                    v-for="(oneFile,index) in dataForm.contract"
+                    :key="index"
                   >
-                    アップロード
-                  </el-button>
+                    &nbsp;&nbsp;&nbsp;{{ oneFile.substring(oneFile.lastIndexOf('/') + 1) }} &nbsp; <el-button
+                      type="text"
+                      @click="deleteFileHandle(index)"
+                    >消去</el-button>
+                  </span>
                 </el-form-item>
+
+                <!-- 结束 -->
               </el-col>
             </el-row>
             <el-row :gutter="20">
@@ -1203,15 +1248,25 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="11">
+              <el-col :span="10">
                 <el-form-item
-                  label="下請単価："
-                  prop="hPrice"
+                  label="月こと契約書種類："
+                  prop="contractType"
                 >
-                  <el-input
-                    v-model="dataForm.hPrice"
-                    disabled
-                  />
+                  <el-select
+                    v-model="dataForm.contractType"
+                    clearable
+                    style="width: 100%"
+                  >
+                    <el-option
+                      label="注文書"
+                      value=1
+                    >注文書</el-option>
+                    <el-option
+                      label="出向個別契約書"
+                      value=2
+                    >出向個別契約書</el-option>
+                  </el-select>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -1237,19 +1292,28 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="11">
+              <el-col :span="10">
                 <el-form-item
-                  label="下請开始月："
-                  prop="hBeginMonth"
+                  label="お支払方法"
+                  prop="termsOfPayment"
+                >
+                  <el-input
+                    v-model="dataForm.termsOfPayment"
+                    disabled
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="10"></el-col>
+              <el-col :span="10">
+                <el-form-item
+                  label="下請締結日"
+                  prop="coopDate"
                 >
                   <el-date-picker
-                    v-model="dataForm.hBeginMonth"
-                    type="month"
-                    placeholder="年月を選びます"
-                    format="YYYY-MM"
-                    value-format="YYYY-MM"
+                    v-model="dataForm.coopDate"
                     disabled
-                    style="width: 100%"
                   />
                 </el-form-item>
               </el-col>
@@ -1266,19 +1330,14 @@
                   />
                 </el-form-item>
               </el-col>
-              <el-col :span="11">
+              <el-col :span="10">
                 <el-form-item
-                  label="下請结束月："
-                  prop="hEndMonth"
+                  label="下請単価："
+                  prop="hPrice"
                 >
-                  <el-date-picker
-                    v-model="dataForm.hEndMonth"
-                    type="month"
-                    placeholder="年月を選びます"
-                    format="YYYY-MM"
-                    value-format="YYYY-MM"
-                    disabled
-                    style="width: 100%"
+                  <el-input
+                    v-model="dataForm.hPrice"
+                    clearable
                   />
                 </el-form-item>
               </el-col>
@@ -1586,10 +1645,10 @@
               <el-col :span="11">
                 <el-form-item
                   label="所属（会社名）："
-                  prop="belongCompany"
+                  prop="companyName"
                 >
                   <el-input
-                    v-model="dataForm.belongCompany"
+                    v-model="dataForm.companyName"
                     disabled
                   />
                 </el-form-item>
@@ -1632,23 +1691,35 @@
                 </el-form-item>
               </el-col>
               <el-col :span="11">
+                <!-- 开始 -->
                 <el-form-item
                   label="契約書："
                   prop="contract"
                 >
-                  <el-button
-                    type="text"
-                    v-if="this.dataForm.contract != null && this.dataForm.contract != '' "
+                  <el-upload
+                    :action="action"
+                    :headers="{ token: token }"
+                    with-credentials="true"
+                    :on-success="updateFileSuccess"
+                    :on-error="updateFileError"
+                    :show-file-list="false"
                   >
-                    {{ getFileName(dataForm.contract) }}
-                  </el-button>
-                  <el-button
-                    v-else
-                    type="text"
+                    <el-button type="primary">アップロード</el-button>
+                  </el-upload>
+                  <br>
+                  <!-- 显示传上去的文件 -->
+                  <span
+                    v-for="(oneFile,index) in dataForm.contract"
+                    :key="index"
                   >
-                    アップロード
-                  </el-button>
+                    &nbsp;&nbsp;&nbsp;{{ oneFile.substring(oneFile.lastIndexOf('/') + 1) }} &nbsp; <el-button
+                      type="text"
+                      @click="deleteFileHandle(index)"
+                    >消去</el-button>
+                  </span>
                 </el-form-item>
+
+                <!-- 结束 -->
               </el-col>
             </el-row>
             <el-row :gutter="20">
@@ -1698,15 +1769,25 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="11">
+              <el-col :span="10">
                 <el-form-item
-                  label="下請単価："
-                  prop="hPrice"
+                  label="月こと契約書種類："
+                  prop="contractType"
                 >
-                  <el-input
-                    v-model="dataForm.hPrice"
-                    disabled
-                  />
+                  <el-select
+                    v-model="dataForm.contractType"
+                    clearable
+                    style="width: 100%"
+                  >
+                    <el-option
+                      label="注文書"
+                      value=1
+                    >注文書</el-option>
+                    <el-option
+                      label="出向個別契約書"
+                      value=2
+                    >出向個別契約書</el-option>
+                  </el-select>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -1732,19 +1813,28 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="11">
+              <el-col :span="10">
                 <el-form-item
-                  label="下請开始月："
-                  prop="hBeginMonth"
+                  label="お支払方法"
+                  prop="termsOfPayment"
+                >
+                  <el-input
+                    v-model="dataForm.termsOfPayment"
+                    disabled
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20">
+              <el-col :span="10"></el-col>
+              <el-col :span="10">
+                <el-form-item
+                  label="下請締結日"
+                  prop="coopDate"
                 >
                   <el-date-picker
-                    v-model="dataForm.hBeginMonth"
-                    type="month"
-                    placeholder="年月を選びます"
-                    format="YYYY-MM"
-                    value-format="YYYY-MM"
+                    v-model="dataForm.coopDate"
                     disabled
-                    style="width: 100%"
                   />
                 </el-form-item>
               </el-col>
@@ -1763,17 +1853,12 @@
               </el-col>
               <el-col :span="11">
                 <el-form-item
-                  label="下請结束月："
-                  prop="hEndMonth"
+                  label="下請単価："
+                  prop="hPrice"
                 >
-                  <el-date-picker
-                    v-model="dataForm.hEndMonth"
-                    type="month"
-                    placeholder="年月を選びます"
-                    format="YYYY-MM"
-                    value-format="YYYY-MM"
-                    disabled
-                    style="width: 100%"
+                  <el-input
+                    v-model="dataForm.hPrice"
+                    clearable
                   />
                 </el-form-item>
               </el-col>
@@ -2080,10 +2165,13 @@ export default {
         cReductPrice: null,
         cIncreasePrice: null,
         standardHours: null,
-        belongCompany: null,
+        companyName: null,
         representative: null,
         contract: null,
+        contractType: null,
         contractNum: null,
+        termsOfPayment: null,
+        coopDate: null,
         hPrice: null,
         hBeginMonth: null,
         hEndMonth: null,
@@ -2092,9 +2180,9 @@ export default {
         hReductPrice: null,
         hIncreasePrice: null,
         priceMonth: null,
-	      cRealBeginMonth: null,
-	      cRealEndMonth: null,
-	      realStopMonth: null,
+        cRealBeginMonth: null,
+        cRealEndMonth: null,
+        realStopMonth: null,
         remark: null,
       },
       // 过滤技術者的姓名列表
@@ -2114,7 +2202,7 @@ export default {
             message: "プロジェクト名は必須項目です",
           },
         ],
-	      cBeginMonth: [
+        cBeginMonth: [
           {
             required: true,
             message: "契約開始月は必須項目です",
@@ -2130,13 +2218,13 @@ export default {
           {
             required: true,
             message: "価格変動月は必須項目です",
-	          trigger: 'change',
+            trigger: "change",
           },
-	        {
-						required: true,
-		        validator: this.validatePriceMonth,
-		        trigger: 'change',
-	        },
+          {
+            required: true,
+            validator: this.validatePriceMonth,
+            trigger: "change",
+          },
         ],
         stopMonth: [
           {
@@ -2149,6 +2237,18 @@ export default {
   },
 
   methods: {
+    testadd() {
+      let that = this;
+      alert(that.dataForm.contractType);
+    },
+    testmodify() {
+      let that = this;
+      alert(that.dataForm.contractType);
+    },
+    // 删除上传的文件
+    deleteFileHandle(index) {
+      this.dataForm.contract.splice(index, 1);
+    },
     init(projectTechnicianInfo, selected) {
       let that = this;
       that.reset();
@@ -2158,13 +2258,20 @@ export default {
         }
         that.reset();
         if (projectTechnicianInfo != null && projectTechnicianInfo != "") {
+          console.log(projectTechnicianInfo);
+
           that.dataForm = {
             ...JSON.parse(JSON.stringify(projectTechnicianInfo)),
           };
+          if (that.dataForm.contract == null || that.dataForm.contract == "") {
+            that.dataForm.contract = [];
+          }
+          if (projectTechnicianInfo.contract == null) {
+            projectTechnicianInfo.contract = "";
+          }
         }
         if (selected != null && selected != "") {
           this.selected = selected;
-          console.log(this.selected);
         }
         if (selected === "insert") that.title = "追加";
         else if (selected === "modify") that.title = "変更";
@@ -2199,10 +2306,13 @@ export default {
         cReductPrice: "",
         cIncreasePrice: "",
         standardHours: "",
-        belongCompany: "",
+        companyName: "",
         representative: "",
-        contract: "",
+        contract: [],
+        contractType: "",
         contractNum: "",
+        termsOfPayment: "",
+        coopDate: "",
         hPrice: "",
         hBeginMonth: "",
         hEndMonth: "",
@@ -2227,7 +2337,7 @@ export default {
         this.dataRule.technicianName[0].required = false;
         this.dataRule.projectName[0].required = false;
         this.dataRule.priceMonth[0].required = false;
-	      this.dataRule.priceMonth[1].required = false;
+        this.dataRule.priceMonth[1].required = false;
         this.dataRule.stopMonth[0].required = false;
         this.dataRule.cPrice[0].required = false;
       } else if (this.selected === "priceChange") {
@@ -2241,10 +2351,10 @@ export default {
         this.dataRule.cBeginMonth[0].required = false;
         this.dataRule.cPrice[0].required = false;
         this.dataRule.priceMonth[0].required = false;
-	      this.dataRule.priceMonth[1].required = false;
+        this.dataRule.priceMonth[1].required = false;
       } else if (this.selected === "insert") {
         this.dataRule.priceMonth[0].required = false;
-	      this.dataRule.priceMonth[1].required = false;
+        this.dataRule.priceMonth[1].required = false;
         this.dataRule.stopMonth[0].required = false;
       }
     },
@@ -2325,7 +2435,7 @@ export default {
           katakana: selectedTechnician.katakana,
           roman: selectedTechnician.roman,
           birthday: selectedTechnician.birthday,
-          belongCompany: selectedTechnician.belongCompany,
+          companyName: selectedTechnician.companyName,
           representative: selectedTechnician.representative,
         };
       }
@@ -2357,7 +2467,11 @@ export default {
     updateFileSuccess: function (resp) {
       let that = this;
       if (resp && resp.file && resp.file.url) {
-        that.dataForm.contract = resp.file.url;
+        if (that.dataForm.contract == null || that.dataForm.contract == "") {
+          that.dataForm.contract == [];
+        }
+        // <...>符号用来分隔文件
+        that.dataForm.contract.push(resp.file.url);
       }
     },
     // 获取上传文件名
@@ -2380,66 +2494,65 @@ export default {
       }
       return dateStr;
     },
-	  // 禁用priceMonth不符合条件的日期
-	  disabledPriceMonth(date) {
-		  const cBeginMonth = this.dataForm.cBeginMonth
-			  ? new Date(this.dataForm.cBeginMonth + "-01")
-			  : null;
-		  const stopMonth = this.dataForm.stopMonth
-			  ? new Date(this.dataForm.stopMonth + "-01")
-			  : null;
+    // 禁用priceMonth不符合条件的日期
+    disabledPriceMonth(date) {
+      const cBeginMonth = this.dataForm.cBeginMonth
+        ? new Date(this.dataForm.cBeginMonth + "-01")
+        : null;
+      const stopMonth = this.dataForm.stopMonth
+        ? new Date(this.dataForm.stopMonth + "-01")
+        : null;
 
-		  // 禁用小于 cBeginMonth 或大于 stopMonth 的日期
-		  if (cBeginMonth && date < cBeginMonth) {
-			  return true;
-		  }
-		  if (stopMonth && date > stopMonth) {
-			  return true;
-		  }
-		  return false;
-	  },
+      // 禁用小于 cBeginMonth 或大于 stopMonth 的日期
+      if (cBeginMonth && date < cBeginMonth) {
+        return true;
+      }
+      if (stopMonth && date > stopMonth) {
+        return true;
+      }
+      return false;
+    },
 
-	  // 提交表单时验证 priceMonth
-	  validatePriceMonth(rule, value, callback) {
-		  if (!value) {
-			  callback();
-			  return;
-		  }
-		  const priceMonth = new Date(value + "-01");
-		  const cBeginMonth = this.dataForm.cBeginMonth
-			  ? new Date(this.dataForm.cBeginMonth + "-01")
-			  : null;
-		  const stopMonth = this.dataForm.stopMonth
-			  ? new Date(this.dataForm.stopMonth + "-01")
-			  : null;
+    // 提交表单时验证 priceMonth
+    validatePriceMonth(rule, value, callback) {
+      if (!value) {
+        callback();
+        return;
+      }
+      const priceMonth = new Date(value + "-01");
+      const cBeginMonth = this.dataForm.cBeginMonth
+        ? new Date(this.dataForm.cBeginMonth + "-01")
+        : null;
+      const stopMonth = this.dataForm.stopMonth
+        ? new Date(this.dataForm.stopMonth + "-01")
+        : null;
 
-		  if (isNaN(priceMonth)) {
-			  callback(new Error("価格変動月の形式が正しくありません"));
-			  return;
-		  }
+      if (isNaN(priceMonth)) {
+        callback(new Error("価格変動月の形式が正しくありません"));
+        return;
+      }
 
-		  if (cBeginMonth && isNaN(cBeginMonth)) {
-			  callback(new Error("契約開始月の形式が正しくありません"));
-			  return;
-		  }
+      if (cBeginMonth && isNaN(cBeginMonth)) {
+        callback(new Error("契約開始月の形式が正しくありません"));
+        return;
+      }
 
-		  if (stopMonth && isNaN(stopMonth)) {
-			  callback(new Error("退場月の形式が正しくありません"));
-			  return;
-		  }
+      if (stopMonth && isNaN(stopMonth)) {
+        callback(new Error("退場月の形式が正しくありません"));
+        return;
+      }
 
-		  if (cBeginMonth && priceMonth < cBeginMonth) {
-			  callback(new Error("価格変動月は契約開始月より早く設定できません"));
-		  } else if (stopMonth && priceMonth > stopMonth) {
-			  callback(new Error("価格変動月は退場月より遅く設定できません"));
-		  } else {
-			  callback();
-		  }
-	  },
+      if (cBeginMonth && priceMonth < cBeginMonth) {
+        callback(new Error("価格変動月は契約開始月より早く設定できません"));
+      } else if (stopMonth && priceMonth > stopMonth) {
+        callback(new Error("価格変動月は退場月より遅く設定できません"));
+      } else {
+        callback();
+      }
+    },
 
     dataFormSubmit: function () {
       let that = this;
-	    console.log("this.dataForm: ", JSON.stringify(this.dataForm, null, 2));
       that.$refs["dataForm"].validate(function (valid) {
         if (valid) {
           let data = {
@@ -2449,7 +2562,7 @@ export default {
             picture: that.dataForm.picture == null ? "" : that.dataForm.picture,
             customerId: that.dataForm.customerId,
             projectId: that.dataForm.projectId,
-	          parentId: that.dataForm.parentId,
+            parentId: that.dataForm.parentId,
             status: that.dataForm.status,
             cPrice: that.dataForm.cPrice,
             cBeginMonth: that.formatDate(that.dataForm.cBeginMonth),
@@ -2460,9 +2573,10 @@ export default {
             cReductPrice: that.dataForm.cReductPrice,
             cIncreasePrice: that.dataForm.cIncreasePrice,
             standardHours: that.dataForm.standardHours,
-            belongCompany: that.dataForm.belongCompany,
+            companyName: that.dataForm.companyName,
             representative: that.dataForm.representative,
-            contract: that.dataForm.contract,
+            contract: that.dataForm.contract.map((item) => `${item}?`).join(""),
+            contractType: that.dataForm.contractType,
             contractNum: that.dataForm.contractNum,
             hPrice: that.dataForm.hPrice,
             hBeginMonth: that.formatDate(that.dataForm.hBeginMonth),
@@ -2472,9 +2586,9 @@ export default {
             hReductPrice: that.dataForm.hReductPrice,
             hIncreasePrice: that.dataForm.hIncreasePrice,
             priceMonth: that.formatDate(that.dataForm.priceMonth),
-	          cRealBeginMonth: that.formatDate(that.dataForm.cRealBeginMonth),
-	          cRealEndMonth: that.formatDate(that.dataForm.cRealEndMonth),
-	          realStopMonth: that.formatDate(that.dataForm.realStopMonth),
+            cRealBeginMonth: that.formatDate(that.dataForm.cRealBeginMonth),
+            cRealEndMonth: that.formatDate(that.dataForm.cRealEndMonth),
+            realStopMonth: that.formatDate(that.dataForm.realStopMonth),
             remark: that.dataForm.remark,
           };
           let method = "";

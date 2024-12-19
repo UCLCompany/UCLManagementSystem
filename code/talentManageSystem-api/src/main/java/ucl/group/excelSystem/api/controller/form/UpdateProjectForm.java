@@ -21,6 +21,15 @@ public class UpdateProjectForm {
     @JsonProperty("principalCompany")
     private String principalCompany;
 
+    @JsonProperty("category")
+    private String category;
+
+    @JsonProperty("uclPrincipal")
+    private String uclPrincipal;
+
+    @JsonProperty("principalId")
+    private String principalId;
+
     @JsonProperty("remark")
     private String remark;
 

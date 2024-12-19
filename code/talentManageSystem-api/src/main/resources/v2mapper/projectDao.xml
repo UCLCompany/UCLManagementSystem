@@ -43,11 +43,11 @@
     <insert id="insertProject" parameterType="ucl.group.excelSystem.api.db.pojo.BasicProjectEntity">
         insert into basic_v2_project(
         project_name,principal,principal_company,customer_id,
-        del_flag,create_time,create_by,remark
+        del_flag,create_time,create_by,remark,category,ucl_principal,principal_id
         )
         values(
         #{projectName},#{principal},#{principalCompany},#{customerId},
-        #{delFlag},NOW(),#{createBy},#{remark}
+        #{delFlag},NOW(),#{createBy},#{remark},#{category},#{uclPrincipal},#{principalId}
         )
     </insert>
 
@@ -58,7 +58,10 @@
                 principal=#{principal},
                 principal_company=#{principalCompany},
                 remark=#{remark},
-            update_by=#{updateBy},
+                category=#{category},
+                ucl_principal=#{uclPrincipal},
+                principal_id=#{principalId},
+                update_by=#{updateBy},
                 update_time=now()
         </set>
         where
@@ -85,6 +88,9 @@
         project_name AS projectName,
         principal AS principal,
         principal_company AS  principalCompany,
+        category AS category,
+        ucl_principal AS uclPrincipal,
+        principal_id AS principalId,
         bp.remark
         from
         basic_v2_project bp

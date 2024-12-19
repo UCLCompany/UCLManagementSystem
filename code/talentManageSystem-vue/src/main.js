@@ -23,12 +23,12 @@ import 'virtual:svg-icons-register';
 // 创建Vue应用实例
 const app = createApp(App);
 
-// 开发用
-// const baseUrl = "http://localhost:8092/talentManageSystem-api/api/v1";
-// const baseUrl2 = "http://localhost:8092/talentManageSystem-api/api/v2";
+// 开发用,
+const baseUrl = "http://localhost:8092/talentManageSystem-api/api/v1";
+const baseUrl2 = "http://localhost:8092/talentManageSystem-api/api/v2";
 //部署用
-const baseUrl = "http://192.168.1.2:8092/talentManageSystem-api/api/v1";
-const baseUrl2 = "http://192.168.1.2:8092/talentManageSystem-api/api/v2";
+// const baseUrl = "http://192.168.1.2:8092/talentManageSystem-api/api/v1";
+// const baseUrl2 = "http://192.168.1.2:8092/talentManageSystem-api/api/v2";
 
 const emitter = mitt();
 localStorage.setItem('lang', 'ja-JP');

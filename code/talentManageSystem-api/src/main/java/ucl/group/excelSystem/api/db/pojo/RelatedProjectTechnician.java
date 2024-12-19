@@ -74,6 +74,11 @@ public class RelatedProjectTechnician extends BasicEntity implements Cloneable {
     private BigDecimal cReductPrice;
 
     /**
+     * 契約書类型
+     */
+    private int contractType;
+
+    /**
      * 契約書
      */
     private String contract;

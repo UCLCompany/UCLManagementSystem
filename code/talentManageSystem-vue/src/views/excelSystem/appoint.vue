@@ -150,15 +150,18 @@
               <td>{{ dataList[scope.$index].roman }}</td>
               <th>契約書：</th>
               <td>
-                <el-button
-                  type="text"
-                  @click="downloadHandle(scope.row.contract)"
-                  v-if="
-                    scope.row.contract != null && scope.row.contract != '' "
+                <span
+                  v-for="(oneFile,index) in dataList[scope.$index].contract"
+                  :key="index"
                 >
-                  クリックしてダウンロード
-                </el-button>
-                <div v-else>契約書がアップロードされていません</div>
+                  <el-button
+                    type="text"
+                    @click="downloadHandle(oneFile)"
+                  >
+                    {{oneFile.substring(oneFile.lastIndexOf("/") + 1)}}
+                  </el-button>
+                </span>
+                <div v-if="scope.row.contract.length == 0">契約書がアップロードされていません</div>
               </td>
             </tr>
             <tr>
@@ -279,7 +282,6 @@
           <el-option
             label="退場"
             value="exit"
-            v-if="!scope.row.stopMonth"
           ></el-option>
           <el-option
             label="削除"
@@ -524,7 +526,7 @@ export default {
         },
         {
           key: 20,
-          prop: "contract",
+          prop: "contractName",
           label: "契約書",
           visible: true,
           sortable: false,
@@ -736,56 +738,6 @@ export default {
           return item;
         });
 
-        // // 该逻辑不能写在map方法里面，因为map一次返回的是一个item，我们一次需要修改多个item的值。
-        // var list = that.dataList;
-        // for (var i = 0; i < list.length; i++) {
-        // 	console.log('111111');
-        // 	var item = list[i];
-        // 	console.log('item["parentId"] = ' + item['parentId']);
-        // 	console.log('item["priceMonth"] = ' + item['priceMonth']);
-        // 	// 筛选出最根部的父节点
-        // 	if (item['parentId'] === 0 && item['priceMonth'] != null) {
-        // 		console.log('222222');
-        // 		// 保存父节点的id值，该变量会在while循环中，根据中间节点的不同，动态改变成中间节点的Id
-        // 		var proTechId_changeMonth = item['projectTechnicianId'];
-        // 		// 保存3个需要改变的月份值
-        // 		var cBeginMonth_changeMonth = item['cBeginMonth'];
-        // 		var cEndMonth_changeMonth = item['cEndMonth'];
-        // 		var stopMonth_changeMonth = item['stopMonth'];
-        // 		// 一直遍历，直到list中所有的中间节点和子节点的3个月份均已与父节点一致
-        // 		// 设置标志位为true
-        // 		var flag = true;
-        // 		while (1) {
-        // 			console.log('333333');
-        // 			// 遍历一次列表，寻找中间节点和子节点，利用proTechId_changeMonth的动态变化，可以保证先更改中间节点的值，最后修改子节点的值
-        // 			for (var i = 0; i < list.length; i++) {
-        // 				var item2 = list[i];
-        // 				if (item2['parentId'] === proTechId_changeMonth && item2['priceMonth'] != null) {
-        // 					// 更新proTechId_changeMonth的值
-        // 					proTechId_changeMonth = item2['projectTechnicianId'];
-        // 					// 担心修改item2的值，list不会同步改变，因此使用list[i]
-        // 					list[i]['cBeginMonth'] = cBeginMonth_changeMonth;
-        // 					list[i]['cEndMonth'] = cEndMonth_changeMonth;
-        // 					list[i]['stopMonth'] = stopMonth_changeMonth;
-        // 					break;
-        // 				}
-        // 				if (item2['parentId'] === proTechId_changeMonth && item2['priceMonth'] === undefined) {
-        // 					console.log('444444');
-        // 					// 担心修改item2的值，list不会同步改变，因此使用list[i]
-        // 					list[i]['cBeginMonth'] = cBeginMonth_changeMonth;
-        // 					list[i]['cEndMonth'] = cEndMonth_changeMonth;
-        // 					list[i]['stopMonth'] = stopMonth_changeMonth;
-        // 					flag = false;
-        // 					break;
-        // 				}
-        // 			}
-        // 			// 当修改完子节点后，设置标志位为false，跳出while循环
-        // 			if (!flag) break;
-        // 		}
-        // 	}
-        // }
-        // console.log("list", JSON.stringify(list, null, 2));
-
         that.totalCount = result.totalCount;
         that.dataListLoading = false;
 
@@ -796,6 +748,22 @@ export default {
         ];
         that.applySorting();
         // console.log("loadProTechList:", JSON.stringify(that.sortOrder, null, 2));
+        that.dataList.forEach((one) => {
+          let tmp = one.contract || "";
+          one.contract = tmp.split("?");
+          one.contract = one.contract.filter(
+            (item) => item !== null && item !== undefined && item !== ""
+          );
+          if (one.contract.length > 0) {
+            one.contractName = one.contract.at(-1);
+            one.contractName = one.contractName.substring(
+              one.contractName.lastIndexOf("/") + 1);
+            console.log("one.contractName---", one.contractName);
+            console.log("one.contract---", one.contract);
+          } else {
+            one.contractName = "";
+          }
+        });
       });
     },
 
@@ -842,8 +810,8 @@ export default {
         (protech) => protech.projectTechnicianId === id
       );
       this.$nextTick(() => {
-        // console.log('project333filtered: ', JSON.stringify(projectTechnicianInfo, null, 2));
         this.$refs.addOrUpdate.init(projectTechnicianInfo, selected);
+        console.log(projectTechnicianInfo);
       });
     },
     priceChangeHandle: function (id, selected) {

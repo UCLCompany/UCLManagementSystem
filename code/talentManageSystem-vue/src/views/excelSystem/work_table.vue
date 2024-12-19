@@ -73,8 +73,7 @@
           <div v-if="editable">
             <el-input
               v-model="one.name"
-              class="edit-input"
-              style="width: 130px;"
+              style="white-space: pre-wrap; width: 130px;"
             ></el-input>
             &nbsp;
             <el-button
@@ -106,41 +105,46 @@
             v-if="row.countProject != 0"
             :rowspan="row.countProject"
           >
-            <el-input
+            <textarea
               v-if="editable"
               v-model="row.productNum"
-              class="edit-input"
+              rows="5"
             />
-            <span v-else>{{ row.productNum }}</span>
+            <span
+              v-else
+              style="white-space: pre-wrap;"
+            >{{ row.productNum }}</span>
           </td>
           <!-- 品名 -->
           <td
             v-if="row.countProject != 0"
             :rowspan="row.countProject"
           >
-            <el-input
+            <textarea
+              type="area"
               v-if="editable"
               v-model="row.productName"
-              class="edit-input"
-            ></el-input>
-            <span v-else>{{ row.productName }}</span>
-            <!-- kai~ sera~ sera~ -->
-            <!-- whatever will be, will be -->
-            <!-- the future is not our's to see -->
-            <!-- kai sera~ sera~ -->
-            <!-- whatever will be, will be~ -->
+              rows="5"
+            ></textarea>
+            <div
+              v-else
+              style="white-space: pre-wrap;"
+            >{{row.productName}}</div>
           </td>
           <!-- 案件概要 -->
           <td
             v-if="row.countProject != 0"
             :rowspan="row.countProject"
           >
-            <el-input
+            <textarea
+              rows="5"
               v-if="editable"
               v-model="row.summary"
-              class="edit-input"
-            ></el-input>
-            <span v-else>{{ row.summary }}</span>
+            />
+            <span
+              v-else
+              style="white-space: pre-wrap;"
+            >{{ row.summary }}</span>
           </td>
           <!-- 技術者氏名 -->
           <td>{{ row.name }}</td>
@@ -151,21 +155,26 @@
             <el-input
               v-if="editable"
               v-model="row.personMonth"
-              class="edit-input"
-            ></el-input>
-            <span v-else>{{ row.personMonth }}</span>
+            />
+            <span
+              v-else
+              style="white-space: pre-wrap;"
+            >{{ row.personMonth }}</span>
           </td>
           <!-- 发注金额 -->
           <td
             v-if="row.countProject != 0"
             :rowspan="row.countProject"
           >
-            <el-input
+            <textarea
+              rows="5"
               v-if="editable"
               v-model="row.orderAmount"
-              class="edit-input"
-            ></el-input>
-            <span v-else>{{ row.orderAmount }}</span>
+            />
+            <span
+              v-else
+              style="white-space: pre-wrap;"
+            >{{ row.orderAmount }}</span>
           </td>
           <!-- 小计 -->
           <td
@@ -202,11 +211,11 @@
             v-if="row.countProject != 0"
             :rowspan="row.countProject"
           >
-            <el-input
+            <textarea
               v-if="editable"
               v-model="row.remark"
-              class="edit-input"
-            ></el-input>
+              rows="5"
+            ></textarea>
             <span v-else>{{ row.remark }}</span>
           </td>
         </tr>
@@ -261,7 +270,7 @@ export default {
   },
   methods: {
     deleteDateHandle(index) {
-    let that = this;
+      let that = this;
       that.dataList.forEach((one) => {
         one.dateList.splice(index, 1);
       });

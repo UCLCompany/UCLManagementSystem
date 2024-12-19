@@ -174,6 +174,13 @@ export default {
           sortable: true,
         },
         {
+          key: 5,
+          label: "カテゴリー",
+          prop: "category",
+          visible: true,
+          sortable: true,
+        },
+        {
           key: 1,
           label: "プロジェクト名",
           prop: "projectName",
