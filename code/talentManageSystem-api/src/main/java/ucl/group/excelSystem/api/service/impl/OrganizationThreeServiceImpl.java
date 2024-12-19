@@ -48,28 +48,43 @@ public class OrganizationThreeServiceImpl implements OrganizationThreeService {
     }
 
 
+    /**
+     * 根据分页参数查询组织3信息
+     *
+     * @param param 分页参数，包含 "page" 和 "length" 键
+     * @return 包含查询结果和分页信息的 PageUtils 对象
+     */
     @Override
     @Transactional
     public PageUtils selectOrganizationThreeByPage(Map<String, Object> param) {
-        // 初始化客户信息列表为null
+
         ArrayList<HashMap> list = null;
-        // 获取客户信息的总数
+
+        // 查询总记录数
         long count = organizationThreeDao.selectOrganizationThreeByPageCount();
 
-        // 如果存在客户信息，则根据参数分页查询
-        if (count > 0) list = organizationThreeDao.selectOrganizationThreeByPage(param);
-            // 否则，创建一个空的列表
-        else list = new ArrayList<>();
+        // 如果有记录，查询分页数据；否则，创建一个空的列表
+        if (count > 0) {
+            list = organizationThreeDao.selectOrganizationThreeByPage(param);
+        } else {
+            list = new ArrayList<>();
+        }
 
         // 从参数中获取当前页码
         int page = MapUtil.getInt(param, "page");
         // 从参数中获取每页长度
         int length = MapUtil.getInt(param, "length");
-        // 创建并返回一个包含分页信息和客户信息列表的PageUtils对象
+
+        // 创建并返回分页工具对象
         PageUtils pageUtils = new PageUtils(list, count, page, length);
         return pageUtils;
     }
 
+    /**
+     * 插入一个新的组织3，并将其与前一个组织关联。
+     *
+     * @param insertOrganizationBO 包含组织信息的业务对象
+     */
     @Override
     @Transactional
     public void insertOrganizationThree(InsertOrganizationBO insertOrganizationBO) {
@@ -77,32 +92,61 @@ public class OrganizationThreeServiceImpl implements OrganizationThreeService {
         basicOrganizationEntity.setOrganizationId(null);
         basicOrganizationEntity.setOrganizationName(insertOrganizationBO.getOrganizationName());
         basicOrganizationEntity.setBelong(insertOrganizationBO.getBelong());
-        //先获取前一个组织的 id
+
+        // 获取前一个组织的 ID
         Long preOrganizationId = insertOrganizationBO.getPreOrganizationId();
+
+        // 插入新的组织3
         organizationThreeDao.insertOrganizationThree(basicOrganizationEntity);
+
+        // 获取新插入组织的 ID
         long id = basicOrganizationEntity.getOrganizationId();
+
+        // 将新插入的组织3与前一个组织关联
         relatedOrg2AndOrg3.insertOrg2AndOrg3(preOrganizationId, id);
     }
 
+    /**
+     * 更新组织3信息，并处理相关联的组织关系。
+     *
+     * @param bean 包含更新组织所需信息的业务对象
+     */
     @Override
     @Transactional
     public void updateOrganizationThree(UpdateOrganizationBO bean) {
+        // 创建一个新的组织实体对象
         BasicOrganizationEntity org3 = new BasicOrganizationEntity();
+
+        // 获取组织ID并设置到实体对象中
         Long organizationId = bean.getOrganizationId();
         org3.setOrganizationId(organizationId);
+
+        // 设置组织名称和所属信息
         org3.setOrganizationName(bean.getOrganizationName());
         org3.setBelong(bean.getBelong());
+
+        // 更新组织信息
         organizationThreeDao.updateOrganizationThree(org3);
+
+        // 获取前一个组织ID和相关联的ID
         Long preOrganizationId = bean.getPreOrganizationId();
         Long relatedId = bean.getRelatedId();
+
+        // 如果相关联的ID和前一个组织ID都存在，则更新相关联的组织关系
         if (relatedId != null && preOrganizationId != null) {
             relatedOrg2AndOrg3.updateOrg2AndOrg3ById(relatedId, preOrganizationId, organizationId);
         }
     }
 
+    /**
+     * 删除指定ID的组织3。
+     *
+     * @param organizationId 组织机构的唯一标识，不能为空。
+     */
     @Override
     @Transactional
     public void deleteOrganizationThree(@NotEmpty(message = "organizationId不能为空") Long organizationId) {
+        // 调用DAO层方法删除指定ID的组织机构
         organizationThreeDao.deleteOrganizationThree(organizationId);
     }
 
@@ -124,23 +168,39 @@ public class OrganizationThreeServiceImpl implements OrganizationThreeService {
         return organizationThreeDao.selectOrganizationThreeByIds(ids);
     }
 
+    /**
+     * 获取组织结构的上级信息，并分页返回。
+     *
+     * @param param 包含分页参数的Map，包括：
+     *              - "length"：每页显示的记录数
+     *              - "start"：起始索引
+     *              - "page"：当前页码
+     * @return 分页后的组织结构信息
+     */
     @Override
     @Transactional
     public PageUtils getUpper(Map<String, Object> param) {
         int length = (int) param.get("length");
         int start = (int) param.get("start");
         int page = (int) param.get("page");
+
+        // 初始化结果列表
         List<OrganizationThreeVO> list = new ArrayList<>();
-        // org3 id
+
+        // 获取所有三级组织的ID
         List<Long> organizationIds = organizationThreeDao.getAllId();
+
+        // 遍历每个三级组织ID，构建对应的组织结构信息
         for (Long organizationId : organizationIds) {
             OrganizationThreeVO orgVO = new OrganizationThreeVO();
+
+            // 获取三级组织的基本信息
             BasicOrganizationEntity org3 = organizationThreeDao.getById(organizationId);
             orgVO.setOrganizationThreeId(org3.getOrganizationId());
             orgVO.setOrganizationName(org3.getOrganizationName());
             orgVO.setBelong(org3.getBelong());
 
-            // org2
+            // 获取二级组织的信息
             Long org2Id = relatedOrg2AndOrg3.selectOrg2AndOrg3ByOrg3Id(organizationId);
             if (org2Id == null) {
                 orgVO.setOrganizationTwoName(null);
@@ -154,7 +214,7 @@ public class OrganizationThreeServiceImpl implements OrganizationThreeService {
                 orgVO.setOrganizationTwoBelong(org2.getBelong());
             }
 
-            //org1
+            // 获取一级组织的信息
             Long org1Id = relatedOrg1AndOrg2.getOrganizationOneByOrganizationTwoId(org2Id);
             if (org1Id == null) {
                 orgVO.setOrganizationOneName(null);
@@ -167,11 +227,18 @@ public class OrganizationThreeServiceImpl implements OrganizationThreeService {
                 orgVO.setOrganizationOneName(org1.getOrganizationName());
                 orgVO.setOrganizationOneBelong(org1.getBelong());
             }
+
+            // 将构建好的组织结构信息添加到结果列表中
             list.add(orgVO);
         }
 
-        List<OrganizationThreeVO> vos = list.subList(start, length);
+        // 根据分页参数截取结果列表
+        List<OrganizationThreeVO> vos = list.subList(start, start + length);
+
+        // 计算总记录数
         int count = vos.size();
+
+        // 构建并返回分页结果
         PageUtils pageUtils = new PageUtils(vos, count, page, length);
         return pageUtils;
     }
