@@ -10,6 +10,7 @@ import ucl.group.excelSystem.api.db.dao.OrganizationOneDao;
 import ucl.group.excelSystem.api.db.dao.OrganizationThreeDao;
 import ucl.group.excelSystem.api.db.pojo.BasicCustomerEntity;
 import ucl.group.excelSystem.api.db.pojo.BasicOrganizationEntity;
+import ucl.group.excelSystem.api.db.pojo.bo.UpdateOrganizationBO;
 import ucl.group.excelSystem.api.db.pojo.vo.OrganizationThreeVO;
 import ucl.group.excelSystem.api.db.pojo.vo.OrganizationTwoVO;
 import ucl.group.excelSystem.api.service.*;
@@ -81,8 +82,18 @@ public class OrganizationThreeServiceImpl implements OrganizationThreeService {
 
     @Override
     @Transactional
-    public void updateOrganizationThree(BasicOrganizationEntity bean) {
-        organizationThreeDao.updateOrganizationThree(bean);
+    public void updateOrganizationThree(UpdateOrganizationBO bean) {
+        BasicOrganizationEntity org3 = new BasicOrganizationEntity();
+        Long organizationId = bean.getOrganizationId();
+        org3.setOrganizationId(organizationId);
+        org3.setOrganizationName(bean.getOrganizationName());
+        org3.setBelong(bean.getBelong());
+        organizationThreeDao.updateOrganizationThree(org3);
+        Long preOrganizationId = bean.getPreOrganizationId();
+        Long relatedId = bean.getRelatedId();
+        if (relatedId != null && preOrganizationId != null) {
+            relatedOrg2AndOrg3.updateOrg2AndOrg3ById(relatedId, preOrganizationId, organizationId);
+        }
     }
 
     @Override

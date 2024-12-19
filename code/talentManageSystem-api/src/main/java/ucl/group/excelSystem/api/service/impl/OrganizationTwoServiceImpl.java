@@ -10,6 +10,7 @@ import ucl.group.excelSystem.api.db.dao.OrganizationOneDao;
 import ucl.group.excelSystem.api.db.dao.OrganizationTwoDao;
 import ucl.group.excelSystem.api.db.pojo.BasicCustomerEntity;
 import ucl.group.excelSystem.api.db.pojo.BasicOrganizationEntity;
+import ucl.group.excelSystem.api.db.pojo.bo.UpdateOrganizationBO;
 import ucl.group.excelSystem.api.db.pojo.vo.OrganizationTwoVO;
 import ucl.group.excelSystem.api.service.*;
 import ucl.group.talentManageSystem.api.common.PageUtils;
@@ -80,8 +81,19 @@ public class OrganizationTwoServiceImpl implements OrganizationTwoService {
 
     @Override
     @Transactional
-    public void updateOrganizationTwo(BasicOrganizationEntity bean) {
-        organizationTwoDao.updateOrganizationTwo(bean);
+    public void updateOrganizationTwo(UpdateOrganizationBO bean) {
+        BasicOrganizationEntity org2 = new BasicOrganizationEntity();
+        Long organizationId = bean.getOrganizationId();
+        org2.setOrganizationId(organizationId);
+        org2.setOrganizationName(bean.getOrganizationName());
+        org2.setBelong(bean.getBelong());
+        organizationTwoDao.updateOrganizationTwo(org2);
+        Long relatedId = bean.getRelatedId();
+        Long preOrganizationId = bean.getPreOrganizationId();
+        // relatedId 和 preOrganizationId 不为空，说明 组织2 要更改所属的组织1
+        if(relatedId != null && preOrganizationId != null) {
+            relatedOrg1AndOrg2.updateOrg1AndOrg2ById(relatedId, preOrganizationId,organizationId);
+        }
     }
 
     //判断要删除的组织下还有没有其他组织的人

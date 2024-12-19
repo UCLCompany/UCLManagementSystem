@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ucl.group.excelSystem.api.controller.request.*;
 import ucl.group.excelSystem.api.db.pojo.BasicCustomerEntity;
 import ucl.group.excelSystem.api.db.pojo.BasicOrganizationEntity;
+import ucl.group.excelSystem.api.db.pojo.bo.UpdateOrganizationBO;
 import ucl.group.excelSystem.api.service.OrganizationTwoService;
 import ucl.group.excelSystem.api.service.RelatedOrg1AndOrg2;
 import ucl.group.talentManageSystem.api.common.PageUtils;
@@ -24,9 +25,7 @@ public class OrganizationTwoController {
 
     @Resource
     private OrganizationTwoService organizationTwoService;
-
-
-
+    
     @GetMapping("/getAllByPage")
     //@SaCheckLogin
     public R selectOrganizationTwo(@Valid OrganizationPageRequest request) {
@@ -51,7 +50,7 @@ public class OrganizationTwoController {
     @Log(title = "管理表格系统v2-组织表1管理", businessType = BusinessType.UPDATE)
     //@SaCheckLogin
     public R updateOrganizationTwo(@RequestBody @Valid UpdateOrganizationRequest request){
-        organizationTwoService.updateOrganizationTwo(BeanUtil.toBean(request,BasicOrganizationEntity.class));
+        organizationTwoService.updateOrganizationTwo(BeanUtil.toBean(request, UpdateOrganizationBO.class));
         return R.ok();
     }
     @DeleteMapping("/deleteOrganizationTwo")

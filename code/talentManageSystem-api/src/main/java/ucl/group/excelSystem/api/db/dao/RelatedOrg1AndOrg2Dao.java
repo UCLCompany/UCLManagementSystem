@@ -18,4 +18,6 @@ public interface RelatedOrg1AndOrg2Dao {
     Long getOrganizationOneByOrganizationTwoId(Long org2Id);
 
     Long getId(Long org1Id, Long org2Id);
+
+    void updateOrg1AndOrg2ById(Long relatedId, Long org1Id, Long org2Id);
 }

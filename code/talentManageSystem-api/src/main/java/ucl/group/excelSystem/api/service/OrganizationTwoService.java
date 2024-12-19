@@ -2,6 +2,7 @@ package ucl.group.excelSystem.api.service;
 
 import org.apache.ibatis.annotations.Param;
 import ucl.group.excelSystem.api.db.pojo.BasicOrganizationEntity;
+import ucl.group.excelSystem.api.db.pojo.bo.UpdateOrganizationBO;
 import ucl.group.excelSystem.api.db.pojo.vo.OrganizationTwoVO;
 import ucl.group.talentManageSystem.api.common.PageUtils;
 
@@ -15,7 +16,7 @@ public interface OrganizationTwoService {
 
     void insertOrganizationTwo(@Param("organizationEntity")BasicOrganizationEntity organizationEntity);
 
-    void updateOrganizationTwo(@Param("bean") BasicOrganizationEntity bean);
+    void updateOrganizationTwo(@Param("bean") UpdateOrganizationBO bean);
 
     void deleteOrganizationTwo(@NotEmpty(message = "organizationId不能为空") @Param("organizationId") Long organizationId);
 

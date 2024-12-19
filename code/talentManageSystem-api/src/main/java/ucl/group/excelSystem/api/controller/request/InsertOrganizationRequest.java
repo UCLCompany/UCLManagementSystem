@@ -16,5 +16,5 @@ public class InsertOrganizationRequest {
     private String belong;
 
 
-    private Long organizationId;
+    private Long preOrganizationId;
 }

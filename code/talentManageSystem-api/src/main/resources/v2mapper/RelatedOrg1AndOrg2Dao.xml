@@ -17,6 +17,14 @@
     <update id="deleteOrg1AndOrg2ByOrg2Id">
         update related_v2_org1_cross_org2 set del_flag = 1 where organization_two_id = #{org2Id}
     </update>
+    <update id="updateOrg1AndOrg2ById">
+        update related_v2_org1_cross_org2
+        set
+        organization_one_id = #{org1Id},
+        organization_two_id = #{org2Id}
+        where
+        org1_cross_org2_id = #{relatedId}
+    </update>
 
     <select id="isRelatedByOrg1IdAndOrg2Id" resultType="java.lang.Boolean">
         select

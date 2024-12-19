@@ -17,4 +17,5 @@ public interface RelatedOrg2AndOrg3Dao {
 
     Long getId(Long org2Id, Long org3Id);
 
+    void updateOrg2AndOrg3ById(Long relatedId, Long org2Id, Long org3Id);
 }

@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ucl.group.excelSystem.api.controller.request.*;
 import ucl.group.excelSystem.api.db.pojo.BasicCustomerEntity;
 import ucl.group.excelSystem.api.db.pojo.BasicOrganizationEntity;
+import ucl.group.excelSystem.api.db.pojo.bo.UpdateOrganizationBO;
 import ucl.group.excelSystem.api.service.OrganizationThreeService;
 import ucl.group.talentManageSystem.api.common.PageUtils;
 import ucl.group.talentManageSystem.api.common.R;
@@ -47,7 +48,7 @@ public class OrganizationThreeController {
     @Log(title = "管理表格系统v2-组织表1管理", businessType = BusinessType.UPDATE)
     //@SaCheckLogin
     public R updateOrganizationThree(@RequestBody @Valid UpdateOrganizationRequest request){
-        organizationThreeService.updateOrganizationThree(BeanUtil.toBean(request,BasicOrganizationEntity.class));
+        organizationThreeService.updateOrganizationThree(BeanUtil.toBean(request, UpdateOrganizationBO.class));
         return R.ok();
     }
     @DeleteMapping("/deleteOrganizationThree")

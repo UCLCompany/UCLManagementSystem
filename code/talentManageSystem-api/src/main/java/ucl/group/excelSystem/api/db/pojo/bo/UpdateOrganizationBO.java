@@ -1,12 +1,11 @@
-package ucl.group.excelSystem.api.controller.request;
+package ucl.group.excelSystem.api.db.pojo.bo;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 
 @Data
-public class UpdateOrganizationRequest {
+public class UpdateOrganizationBO {
     @NotNull(message="organizationId不能为空")
     private Long organizationId;
 
@@ -16,5 +15,5 @@ public class UpdateOrganizationRequest {
 
     private Long preOrganizationId;
 
-    private String relatedId;
+    private Long relatedId;
 }
